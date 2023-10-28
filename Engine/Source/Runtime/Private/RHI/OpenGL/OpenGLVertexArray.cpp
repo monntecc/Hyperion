@@ -37,7 +37,7 @@ namespace Hyperion {
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
 		glDeleteVertexArrays(1, &m_RendererID);
-	}
+	} 
 
 	void OpenGLVertexArray::Bind() const
 	{
@@ -60,8 +60,8 @@ namespace Hyperion {
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index,
+			glEnableVertexAttribArray(index + m_VertexBufferIndexOffset);
+			glVertexAttribPointer(index + m_VertexBufferIndexOffset,
 				static_cast<GLint>(element.GetComponentCount()),
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
@@ -72,6 +72,7 @@ namespace Hyperion {
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);
+		m_VertexBufferIndexOffset += static_cast<uint32_t>(layout.GetElements().size());
 	}
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
