@@ -1,3 +1,6 @@
+@echo off
 xmake f -y -p wasm -m debug
 xmake -y
-PAUSE
+IF %ERRORLEVEL% NEQ 0 (
+  PAUSE
+)
