@@ -1,4 +1,4 @@
-#include "editor/layer/ExampleLayer.hpp"
+#include "Editor/Layer/ExampleLayer.hpp"
 
 class Editor final : public Hyperion::Application
 {
@@ -17,15 +17,15 @@ Hyperion::Application* Hyperion::CreateApplication()
 	return new Editor();
 }
 
-int main(int argc, char** argv)
+bool main()
 {
 	Hyperion::Log::Init();
 	HR_CORE_WARN("Initialized Log!");
 	HR_INFO("Hello from Hyperion!");
 
-	auto app = Hyperion::CreateApplication();
+	const auto app = Hyperion::CreateApplication();
 	app->Run();
 	delete app;
 
-	return 0;
+	return FALSE;
 }
