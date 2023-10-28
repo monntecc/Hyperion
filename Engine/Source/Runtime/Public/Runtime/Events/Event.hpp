@@ -49,7 +49,7 @@ namespace Hyperion {
 			virtual int GetCategoryFlags() const = 0;
 			virtual std::string ToString() const { return GetName(); }
 
-			inline bool IsInCategory(EventCategory category)
+			bool IsInCategory(EventCategory category)
 			{
 				return GetCategoryFlags() & category;
 			}
@@ -57,20 +57,19 @@ namespace Hyperion {
 
 	class EventDispatcher
 	{
-		template<typename T>
-		using EventFn = std::function<bool(T&)>;
 	public:
 		EventDispatcher(Event& event)
 			: m_Event(event)
 		{
 		}
 
-		template<typename T>
-		bool Dispatch(EventFn<T> func)
+		// F will be deduced by the compiler
+		template<typename T, typename F>
+		bool Dispatch(const F& func)
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.Handled |= func(static_cast<T&>(m_Event));
+				m_Event.Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;
