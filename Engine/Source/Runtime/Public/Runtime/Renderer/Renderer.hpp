@@ -9,6 +9,8 @@ namespace Hyperion {
 	class  HYPERION_API Renderer
 	{
 	public:
+		static void Init();
+		
 		static void BeginScene(OrthographicCamera& camera); // TODO: Add camera, environment, etc.
 		static void EndScene();
 

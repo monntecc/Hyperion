@@ -18,13 +18,15 @@ namespace Hyperion {
 			// DirectX = 2,
 			// Vulkan = 3
 		};
-	public:
-		virtual void SetClearColor(const glm::vec4& color);
-		virtual void Clear();
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray);
+		virtual void Init() = 0;
+		
+		virtual void SetClearColor(const glm::vec4& color) = 0;
+		virtual void Clear() = 0;
 
-		inline static API GetAPI() { return s_RendererAPI; }
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
+
+		static API GetAPI() { return s_RendererAPI; }
 	private:
 		static API s_RendererAPI;
 	};

@@ -176,6 +176,7 @@ public:
     	m_TextureShader = Hyperion::Shader::Create(textureVertexSrc, textureFragmentSrc);
 
     	m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
+    	m_HyperionLogoTexture = Hyperion::Texture2D::Create("Assets/Textures/HyperionLogo.png");
     }
 
     void OnUpdate(Hyperion::Timestep timestep) override
@@ -227,7 +228,9 @@ public:
 
     	m_Texture->Bind();
         Hyperion::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-
+    	m_HyperionLogoTexture->Bind();
+    	Hyperion::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+    	
         // Triangle
         // Hyperion::Renderer::Submit(m_Shader, m_VertexArray);
 
@@ -253,7 +256,7 @@ private:
     Hyperion::Ref<Hyperion::Shader> m_FlatColorShader, m_TextureShader;
     Hyperion::Ref<Hyperion::VertexArray> m_SquareVA;
 
-	Hyperion::Ref<Hyperion::Texture2D> m_Texture;
+	Hyperion::Ref<Hyperion::Texture2D> m_Texture, m_HyperionLogoTexture;
 
     Hyperion::OrthographicCamera m_Camera;
     glm::vec3 m_CameraPosition;

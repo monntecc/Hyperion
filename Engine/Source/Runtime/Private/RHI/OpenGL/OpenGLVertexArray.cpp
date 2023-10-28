@@ -65,7 +65,7 @@ namespace Hyperion {
 				static_cast<GLint>(element.GetComponentCount()),
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
-				static_cast<GLsizei>(layout.GetStride()),
+				layout.GetStride(),
 				reinterpret_cast<const void*>(static_cast<intptr_t>(element.Offset)));
 
 			index++;
