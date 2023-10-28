@@ -18,7 +18,7 @@ target("Runtime")
     -- Add header files
     add_headerfiles("./Public/**/**.hpp")
     add_headerfiles("./Hyperion.hpp")
-    add_headerfiles("$(projectdir)/Thirdparty/glm/glm/*.hpp")
+    add_headerfiles("./pch.hpp")
 
     -- Add include directories
     add_includedirs("./")
