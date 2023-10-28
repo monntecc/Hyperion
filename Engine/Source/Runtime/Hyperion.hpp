@@ -19,6 +19,8 @@
 #include "Runtime/Renderer/Shader.hpp"
 #include "Runtime/Renderer/VertexArray.hpp"
 
+#include "Runtime/Renderer/Texture.hpp"
+
 #include "Runtime/Renderer/OrthographicCamera.hpp"
 // ------------------------------------------------
 

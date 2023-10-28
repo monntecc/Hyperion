@@ -16,7 +16,7 @@ public:
           m_Camera(-1.6f, 1.6f, -0.9f, 0.9f),
           m_CameraPosition(0.0f)
     {
-        m_VertexArray.reset(Hyperion::VertexArray::Create());
+        m_VertexArray = Hyperion::VertexArray::Create();
 
         float vertices[3 * 7] = {
             -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
@@ -25,7 +25,7 @@ public:
         };
 
         Hyperion::Ref<Hyperion::VertexBuffer> vertexBuffer;
-        vertexBuffer.reset(Hyperion::VertexBuffer::Create(vertices, sizeof(vertices)));
+        vertexBuffer = Hyperion::VertexBuffer::Create(vertices, sizeof(vertices));
 
         const Hyperion::BufferLayout layout = {
             {Hyperion::ShaderDataType::Float3, "a_Position"},
@@ -35,33 +35,34 @@ public:
         vertexBuffer->SetLayout(layout);
         m_VertexArray->AddVertexBuffer(vertexBuffer);
 
-        uint32_t indices[3] = {0, 1, 2};
+        uint32_t indices[3] = { 0, 1, 2 };
 
         Hyperion::Ref<Hyperion::IndexBuffer> indexBuffer;
-        indexBuffer.reset(Hyperion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+        indexBuffer = Hyperion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
         m_VertexArray->SetIndexBuffer(indexBuffer);
 
-        m_SquareVA.reset(Hyperion::VertexArray::Create());
+        m_SquareVA = Hyperion::VertexArray::Create();
 
-        float squareVertices[3 * 4] = {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.5f, 0.5f, 0.0f,
-            -0.5f, 0.5f, 0.0f,
+        float squareVertices[5 * 4] = {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+             0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+             0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
         };
 
         Hyperion::Ref<Hyperion::VertexBuffer> squareVB;
-        squareVB.reset(Hyperion::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+        squareVB = Hyperion::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 
         squareVB->SetLayout({
             {Hyperion::ShaderDataType::Float3, "a_Position"},
+            {Hyperion::ShaderDataType::Float2, "a_TexCoord"},
         });
         m_SquareVA->AddVertexBuffer(squareVB);
 
-        uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
+        uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
         Hyperion::Ref<Hyperion::IndexBuffer> squareIB;
-        squareIB.reset(Hyperion::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+        squareIB = Hyperion::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 
         m_SquareVA->SetIndexBuffer(squareIB);
 
@@ -101,7 +102,7 @@ public:
 			}
 		)";
 
-        m_Shader.reset(Hyperion::Shader::Create(vertexSrc, fragmentSrc));
+        m_Shader = Hyperion::Shader::Create(vertexSrc, fragmentSrc);
 
         std::string flatColorVertexSrc = R"(
 			#version 330 core
@@ -136,7 +137,45 @@ public:
 			}
 		)";
 
-        m_FlatColorShader.reset(Hyperion::Shader::Create(flatColorVertexSrc, flatColorFragmentSrc));
+        m_FlatColorShader = Hyperion::Shader::Create(flatColorVertexSrc, flatColorFragmentSrc);
+
+    	std::string textureVertexSrc = R"(
+			#version 330 core
+
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TexCoord;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			out vec2 v_TexCoord;
+
+			void main()
+			{
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+			}
+		)";
+
+    	std::string textureFragmentSrc = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 color;
+
+			in vec2 v_TexCoord;
+
+			uniform sampler2D u_Texture;
+
+			void main()
+			{
+				color = texture(u_Texture, v_TexCoord);
+
+			}
+		)";
+
+    	m_TextureShader = Hyperion::Shader::Create(textureVertexSrc, textureFragmentSrc);
+
+    	m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
     }
 
     void OnUpdate(Hyperion::Timestep timestep) override
@@ -169,7 +208,12 @@ public:
         const static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
         std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_FlatColorShader)->Bind();
-        std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+        std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3(
+            "u_Color", m_SquareColor);
+
+    	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_TextureShader)->Bind();
+    	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_TextureShader)->UploadUniformInt(
+			"u_Texture", 0);
 
         for (int y = 0; y < 20; y++)
         {
@@ -181,16 +225,20 @@ public:
             }
         }
 
-        Hyperion::Renderer::Submit(m_Shader, m_VertexArray);
+    	m_Texture->Bind();
+        Hyperion::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+        // Triangle
+        // Hyperion::Renderer::Submit(m_Shader, m_VertexArray);
 
         Hyperion::Renderer::EndScene();
     }
 
     void OnImGuiRender() override
     {
-    	ImGui::Begin("Settings");
-    	ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
-    	ImGui::End();
+        ImGui::Begin("Settings");
+        ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+        ImGui::End();
     }
 
 
@@ -202,8 +250,10 @@ private:
     Hyperion::Ref<Hyperion::Shader> m_Shader;
     Hyperion::Ref<Hyperion::VertexArray> m_VertexArray;
 
-    Hyperion::Ref<Hyperion::Shader> m_FlatColorShader;
+    Hyperion::Ref<Hyperion::Shader> m_FlatColorShader, m_TextureShader;
     Hyperion::Ref<Hyperion::VertexArray> m_SquareVA;
+
+	Hyperion::Ref<Hyperion::Texture2D> m_Texture;
 
     Hyperion::OrthographicCamera m_Camera;
     glm::vec3 m_CameraPosition;

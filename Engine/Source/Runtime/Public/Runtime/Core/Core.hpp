@@ -19,7 +19,7 @@
 
 #ifndef HR_DEBUG
 	#define HR_ENABLE_ASSERTS
-#endif // HR_ENABLE_ASSERTS
+#endif // HR_DEBUG
 
 #ifdef HR_ENABLE_ASSERTS
 	#define HR_ASSERT(x, ...) { if(!(x)) { HR_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }

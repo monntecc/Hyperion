@@ -66,7 +66,7 @@ namespace Hyperion {
 
 			HR_CORE_ASSERT(false, "Unknown ShaderDataType!");
 			return 0;
-		};
+		}
 	};
 
 	class HYPERION_API BufferLayout
@@ -80,9 +80,9 @@ namespace Hyperion {
 			CalculateOffsetsAndStride();
 		}
 
-		inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
+		const std::vector<BufferElement>& GetElements() const { return m_Elements; }
 
-		inline uint32_t GetStride() const { return m_Stride; }
+		int32_t GetStride() const { return m_Stride; }
 
 		std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
 		std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
@@ -100,7 +100,7 @@ namespace Hyperion {
 				m_Stride += element.Size;
 			}
 		}
-	private:
+		
 		std::vector<BufferElement> m_Elements;
 		uint32_t m_Stride = 0;
 	};
@@ -116,7 +116,7 @@ namespace Hyperion {
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
-		static VertexBuffer* Create(float* vertices, uint32_t size);
+		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 	};
 
 	class HYPERION_API IndexBuffer
@@ -129,7 +129,7 @@ namespace Hyperion {
 
 		virtual uint32_t GetCount() const = 0;
 
-		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	};
 
 }

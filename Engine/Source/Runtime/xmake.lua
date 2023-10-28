@@ -4,12 +4,15 @@ target("Runtime")
     set_arch("x64")
     set_warnings("all")
     set_group("Source")
+    
+    -- Set running directory
+    set_rundir("$(projectdir)/Engine/Source/Runtime")
 
     -- Add mode rules
     add_rules("mode.release", "mode.debug")
 
     -- Set Pre-compiled header
-    set_pcxxheader("pch.hpp")
+    set_pcxxheader("./pch.hpp")
 
     -- Add files
     add_files("./Private/**/**.cpp")
@@ -23,8 +26,6 @@ target("Runtime")
     -- Add include directories
     add_includedirs("./")
     add_includedirs("./Public")
-    add_includedirs("$(projectdir)/Thirdparty/spdlog/include")
-    add_includedirs("$(projectdir)/Thirdparty/glm")
 
     -- Add defines
     add_defines("_CRT_SECURE_NO_WARNINGS")
@@ -34,7 +35,7 @@ target("Runtime")
 
     -- Link libraries
     add_linkdirs("$(projectdir)/binaries/target/$(host)/$(arch)/$(mode)")
-    add_deps("ImGui", "GLFW", "Glad")
+    add_deps("ImGui", "GLFW", "Glad", "stb_image", "glm", "spdlog")
     add_syslinks("opengl32")
 
     -- Set configurations

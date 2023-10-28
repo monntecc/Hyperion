@@ -5,7 +5,6 @@ set_policy("check.auto_ignore_flags", false)
 
 -- Set build, run, object directories
 set_config("buildir", "binaries")
-set_rundir("$(projectdir)/binaries/target/$(host)/$(arch)/$(mode)")
 set_targetdir("$(projectdir)/binaries/target/$(host)/$(arch)/$(mode)")
 set_objectdir("$(projectdir)/binaries/obj/$(host)/$(arch)/$(mode)")
 set_dependir("$(projectdir)/binaries/deps/$(host)/$(arch)/$(mode)")
@@ -15,10 +14,13 @@ option("engine-version")
     set_showmenu(true)
     add_defines("VERSION=\"$(engine-version)\"")
 
--- Include thirdparty libraries
+-- Include third-party libraries
+includes("Thirdparty/spdlog/xmake.lua")
+includes("Thirdparty/glm/xmake.lua")
 includes("Thirdparty/Glad/xmake.lua")
 includes("Thirdparty/GLFW/xmake.lua")
 includes("Thirdparty/ImGui/xmake.lua")
+includes("Thirdparty/stb_image/xmake.lua")
 
 -- Include internal libraries
 includes("Engine/Source/Runtime/xmake.lua")
