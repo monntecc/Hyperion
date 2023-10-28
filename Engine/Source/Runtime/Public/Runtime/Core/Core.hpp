@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #ifdef HR_PLATFORM_WINDOWS
 	#if HR_DYNAMIC_LINK
 		#ifdef HR_BUILD_DLL
@@ -30,3 +32,13 @@
 #define BIT(x) (1 << x)
 
 #define HR_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+namespace Hyperion {
+
+	template<typename T>
+	using Scope = std::unique_ptr<T>;
+
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+	
+}

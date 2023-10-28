@@ -17,7 +17,7 @@ Hyperion::Application* Hyperion::CreateApplication()
 	return new Editor();
 }
 
-bool main()
+int main(int argc, char** argv)
 {
 	Hyperion::Log::Init();
 	HR_CORE_WARN("Initialized Log!");

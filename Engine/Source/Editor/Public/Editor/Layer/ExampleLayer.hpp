@@ -24,7 +24,7 @@ public:
             0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
         };
 
-        std::shared_ptr<Hyperion::VertexBuffer> vertexBuffer;
+        Hyperion::Ref<Hyperion::VertexBuffer> vertexBuffer;
         vertexBuffer.reset(Hyperion::VertexBuffer::Create(vertices, sizeof(vertices)));
 
         const Hyperion::BufferLayout layout = {
@@ -37,7 +37,7 @@ public:
 
         uint32_t indices[3] = {0, 1, 2};
 
-        std::shared_ptr<Hyperion::IndexBuffer> indexBuffer;
+        Hyperion::Ref<Hyperion::IndexBuffer> indexBuffer;
         indexBuffer.reset(Hyperion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
         m_VertexArray->SetIndexBuffer(indexBuffer);
 
@@ -50,7 +50,7 @@ public:
             -0.5f, 0.5f, 0.0f,
         };
 
-        std::shared_ptr<Hyperion::VertexBuffer> squareVB;
+        Hyperion::Ref<Hyperion::VertexBuffer> squareVB;
         squareVB.reset(Hyperion::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 
         squareVB->SetLayout({
@@ -60,7 +60,7 @@ public:
 
         uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
 
-        std::shared_ptr<Hyperion::IndexBuffer> squareIB;
+        Hyperion::Ref<Hyperion::IndexBuffer> squareIB;
         squareIB.reset(Hyperion::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 
         m_SquareVA->SetIndexBuffer(squareIB);
@@ -131,7 +131,7 @@ public:
 
 			void main()
 			{
-				color = vec4(u_Color, 1.0f);
+				color = vec4(u_Color, 1.0);
 
 			}
 		)";
@@ -199,11 +199,11 @@ public:
     }
 
 private:
-    std::shared_ptr<Hyperion::Shader> m_Shader;
-    std::shared_ptr<Hyperion::VertexArray> m_VertexArray;
+    Hyperion::Ref<Hyperion::Shader> m_Shader;
+    Hyperion::Ref<Hyperion::VertexArray> m_VertexArray;
 
-    std::shared_ptr<Hyperion::Shader> m_FlatColorShader;
-    std::shared_ptr<Hyperion::VertexArray> m_SquareVA;
+    Hyperion::Ref<Hyperion::Shader> m_FlatColorShader;
+    Hyperion::Ref<Hyperion::VertexArray> m_SquareVA;
 
     Hyperion::OrthographicCamera m_Camera;
     glm::vec3 m_CameraPosition;

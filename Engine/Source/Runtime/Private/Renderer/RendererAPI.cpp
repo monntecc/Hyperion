@@ -16,7 +16,7 @@ namespace Hyperion {
 
 	}
 
-	void RendererAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
+	void RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
 	{
 
 	}
