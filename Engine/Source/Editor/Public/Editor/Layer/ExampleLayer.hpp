@@ -16,6 +16,7 @@ public:
           m_Camera(-1.6f, 1.6f, -0.9f, 0.9f),
           m_CameraPosition(0.0f)
     {
+    	
         m_VertexArray = Hyperion::VertexArray::Create();
 
         float vertices[3 * 7] = {
@@ -138,42 +139,8 @@ public:
 		)";
 
         m_FlatColorShader = Hyperion::Shader::Create(flatColorVertexSrc, flatColorFragmentSrc);
-
-    	std::string textureVertexSrc = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec2 a_TexCoord;
-
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
-
-			out vec2 v_TexCoord;
-
-			void main()
-			{
-				v_TexCoord = a_TexCoord;
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-			}
-		)";
-
-    	std::string textureFragmentSrc = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;
-
-			in vec2 v_TexCoord;
-
-			uniform sampler2D u_Texture;
-
-			void main()
-			{
-				color = texture(u_Texture, v_TexCoord);
-
-			}
-		)";
-
-    	m_TextureShader = Hyperion::Shader::Create(textureVertexSrc, textureFragmentSrc);
+    	
+    	m_TextureShader = Hyperion::Shader::Create("Assets/Shaders/Texture.glsl");
 
     	m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
     	m_HyperionLogoTexture = Hyperion::Texture2D::Create("Assets/Textures/HyperionLogo.png");

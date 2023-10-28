@@ -25,7 +25,7 @@ target("Editor")
     add_includedirs("./Public")
     
     -- Add extra files
-    add_extrafiles("Assets/Textures/*.png")
+    add_extrafiles("Assets/**/*.*")
 
     -- Add deps
     add_deps("Runtime", "glm", "spdlog") 
