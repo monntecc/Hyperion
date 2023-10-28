@@ -40,7 +40,7 @@ namespace Hyperion {
 		uint32_t Offset;
 		bool Normalized;
 
-		BufferElement() : Name(nullptr), Type(ShaderDataType::None), Size(0), Offset(0), Normalized(false) {}
+		BufferElement() : Type(ShaderDataType::None), Size(0), Offset(0), Normalized(false) {}
 
 		BufferElement(ShaderDataType type, std::string name, bool normalized = false)
 			: Name(std::move(name)), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
