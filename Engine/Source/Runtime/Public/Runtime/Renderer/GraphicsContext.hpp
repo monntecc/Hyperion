@@ -1,0 +1,11 @@
+#pragma once
+
+namespace Hyperion {
+
+class HYPERION_API GraphicsContext {
+	public:
+		virtual void Init() = 0;
+		virtual void SwapBuffers() = 0;
+	};
+
+}
