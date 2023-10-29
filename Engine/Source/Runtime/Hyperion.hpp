@@ -22,6 +22,7 @@
 #include "Runtime/Renderer/Texture.hpp"
 
 #include "Runtime/Renderer/OrthographicCamera.hpp"
+#include "Runtime/Renderer/OrthographicCameraController.hpp"
 // ------------------------------------------------
 
 // ------------ KeyCodes ------------

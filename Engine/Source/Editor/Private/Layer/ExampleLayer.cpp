@@ -5,62 +5,59 @@
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
-ExampleLayer::ExampleLayer()
-    : Layer("Example"),
-      m_Camera(-1.6f, 1.6f, -0.9f, 0.9f),
-      m_CameraPosition(0.0f)
+ExampleLayer::ExampleLayer() : Layer("Example"), m_CameraController(1280.0f / 720.0f, true)
 {
-    m_VertexArray = Hyperion::VertexArray::Create();
+	m_VertexArray = Hyperion::VertexArray::Create();
 
-    float vertices[3 * 7] = {
-        -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
-        0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
-        0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
-    };
+	float vertices[3 * 7] = {
+		-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+		0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+		0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
+	};
 
-    const Hyperion::Ref<Hyperion::VertexBuffer> vertexBuffer = Hyperion::VertexBuffer::Create(
-        vertices, sizeof(vertices));
+	const Hyperion::Ref<Hyperion::VertexBuffer> vertexBuffer = Hyperion::VertexBuffer::Create(
+		vertices, sizeof(vertices));
 
-    const Hyperion::BufferLayout layout = {
-        {Hyperion::ShaderDataType::Float3, "a_Position"},
-        {Hyperion::ShaderDataType::Float4, "a_Color"},
-    };
+	const Hyperion::BufferLayout layout = {
+		{Hyperion::ShaderDataType::Float3, "a_Position"},
+		{Hyperion::ShaderDataType::Float4, "a_Color"},
+	};
 
-    vertexBuffer->SetLayout(layout);
-    m_VertexArray->AddVertexBuffer(vertexBuffer);
+	vertexBuffer->SetLayout(layout);
+	m_VertexArray->AddVertexBuffer(vertexBuffer);
 
-    uint32_t indices[3] = {0, 1, 2};
+	uint32_t indices[3] = {0, 1, 2};
 
-    const Hyperion::Ref<Hyperion::IndexBuffer> indexBuffer = Hyperion::IndexBuffer::Create(
-        indices, sizeof(indices) / sizeof(uint32_t));
-    m_VertexArray->SetIndexBuffer(indexBuffer);
+	const Hyperion::Ref<Hyperion::IndexBuffer> indexBuffer = Hyperion::IndexBuffer::Create(
+		indices, sizeof(indices) / sizeof(uint32_t));
+	m_VertexArray->SetIndexBuffer(indexBuffer);
 
-    m_SquareVA = Hyperion::VertexArray::Create();
+	m_SquareVA = Hyperion::VertexArray::Create();
 
-    float squareVertices[5 * 4] = {
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
-    };
+	float squareVertices[5 * 4] = {
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+	};
 
-    const Hyperion::Ref<Hyperion::VertexBuffer> squareVB = Hyperion::VertexBuffer::Create(
-        squareVertices, sizeof(squareVertices));
+	const Hyperion::Ref<Hyperion::VertexBuffer> squareVB = Hyperion::VertexBuffer::Create(
+		squareVertices, sizeof(squareVertices));
 
-    squareVB->SetLayout({
-        {Hyperion::ShaderDataType::Float3, "a_Position"},
-        {Hyperion::ShaderDataType::Float2, "a_TexCoord"},
-    });
-    m_SquareVA->AddVertexBuffer(squareVB);
+	squareVB->SetLayout({
+		{Hyperion::ShaderDataType::Float3, "a_Position"},
+		{Hyperion::ShaderDataType::Float2, "a_TexCoord"},
+	});
+	m_SquareVA->AddVertexBuffer(squareVB);
 
-    uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
+	uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
 
-    const Hyperion::Ref<Hyperion::IndexBuffer> squareIB = Hyperion::IndexBuffer::Create(
-        squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
+	const Hyperion::Ref<Hyperion::IndexBuffer> squareIB = Hyperion::IndexBuffer::Create(
+		squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 
-    m_SquareVA->SetIndexBuffer(squareIB);
+	m_SquareVA->SetIndexBuffer(squareIB);
 
-    const std::string vertexSrc = R"(
+	const std::string vertexSrc = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
@@ -80,7 +77,7 @@ ExampleLayer::ExampleLayer()
 			}
 		)";
 
-    const std::string fragmentSrc = R"(
+	const std::string fragmentSrc = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
@@ -96,9 +93,9 @@ ExampleLayer::ExampleLayer()
 			}
 		)";
 
-    m_Shader = Hyperion::Shader::Create("TriangleVertexPosColor", vertexSrc, fragmentSrc);
+	m_Shader = Hyperion::Shader::Create("TriangleVertexPosColor", vertexSrc, fragmentSrc);
 
-    const std::string flatColorVertexSrc = R"(
+	const std::string flatColorVertexSrc = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
@@ -115,7 +112,7 @@ ExampleLayer::ExampleLayer()
 			}
 		)";
 
-    const std::string flatColorFragmentSrc = R"(
+	const std::string flatColorFragmentSrc = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
@@ -131,16 +128,16 @@ ExampleLayer::ExampleLayer()
 			}
 		)";
 
-    m_FlatColorShader = Hyperion::Shader::Create("FlatColor", flatColorVertexSrc, flatColorFragmentSrc);
+	m_FlatColorShader = Hyperion::Shader::Create("FlatColor", flatColorVertexSrc, flatColorFragmentSrc);
 
-    const auto textureShader = m_ShaderLibrary.Load("Assets/Shaders/Texture.glsl");
+	const auto textureShader = m_ShaderLibrary.Load("Assets/Shaders/Texture.glsl");
 
-    m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
-    m_HyperionLogoTexture = Hyperion::Texture2D::Create("Assets/Textures/HyperionLogo.png");
+	m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
+	m_HyperionLogoTexture = Hyperion::Texture2D::Create("Assets/Textures/HyperionLogo.png");
 
-    std::dynamic_pointer_cast<Hyperion::OpenGLShader>(textureShader)->Bind();
-    std::dynamic_pointer_cast<Hyperion::OpenGLShader>(textureShader)->UploadUniformInt(
-        "u_Texture", 0);
+	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(textureShader)->Bind();
+	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(textureShader)->UploadUniformInt(
+		"u_Texture", 0);
 }
 
 
@@ -153,30 +150,12 @@ void ExampleLayer::OnImGuiRender()
 
 void ExampleLayer::OnUpdate(Hyperion::Timestep timestep)
 {
-    // Move camera using WASD keys
-    if (Hyperion::Input::IsKeyPressed(HR_KEY_W))
-        m_CameraPosition.y += m_CameraMoveSpeed * timestep;
-    else if (Hyperion::Input::IsKeyPressed(HR_KEY_S))
-        m_CameraPosition.y -= m_CameraMoveSpeed * timestep;
-
-    if (Hyperion::Input::IsKeyPressed(HR_KEY_A))
-        m_CameraPosition.x -= m_CameraMoveSpeed * timestep;
-    else if (Hyperion::Input::IsKeyPressed(HR_KEY_D))
-        m_CameraPosition.x += m_CameraMoveSpeed * timestep;
-
-    // Rotate camera using QE keys
-    if (Hyperion::Input::IsKeyPressed(HR_KEY_Q))
-        m_CameraRotation -= m_CameraRotationSpeed * timestep;
-    else if (Hyperion::Input::IsKeyPressed(HR_KEY_E))
-        m_CameraRotation += m_CameraRotationSpeed * timestep;
-
+	m_CameraController.OnUpdate(timestep);
+	
     Hyperion::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
     Hyperion::RenderCommand::Clear();
 
-    m_Camera.SetPosition(m_CameraPosition);
-    m_Camera.SetRotation(m_CameraRotation);
-
-    Hyperion::Renderer::BeginScene(m_Camera);
+    Hyperion::Renderer::BeginScene(m_CameraController.GetCamera());
 
     const static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -209,4 +188,5 @@ void ExampleLayer::OnUpdate(Hyperion::Timestep timestep)
 
 void ExampleLayer::OnEvent(Hyperion::Event& event)
 {
+	m_CameraController.OnEvent(event);
 }
