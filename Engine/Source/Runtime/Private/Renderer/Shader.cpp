@@ -56,14 +56,14 @@ namespace Hyperion {
 	{
 		const auto shader = Shader::Create(filepath);
 		Add(shader);
-		return shader;
+		return m_Shaders.at(shader->GetName());
 	}
 
 	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
 	{
 		const auto shader = Shader::Create(filepath);
 		Add(name, shader);
-		return shader;
+		return m_Shaders.at(shader->GetName());
 	}
 
 	Ref<Shader> ShaderLibrary::Get(const std::string& name)

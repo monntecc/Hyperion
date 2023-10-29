@@ -25,8 +25,7 @@ public:
             0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
         };
 
-        Hyperion::Ref<Hyperion::VertexBuffer> vertexBuffer;
-        vertexBuffer = Hyperion::VertexBuffer::Create(vertices, sizeof(vertices));
+        const Hyperion::Ref<Hyperion::VertexBuffer> vertexBuffer = Hyperion::VertexBuffer::Create(vertices, sizeof(vertices));
 
         const Hyperion::BufferLayout layout = {
             {Hyperion::ShaderDataType::Float3, "a_Position"},
@@ -38,8 +37,8 @@ public:
 
         uint32_t indices[3] = { 0, 1, 2 };
 
-        Hyperion::Ref<Hyperion::IndexBuffer> indexBuffer;
-        indexBuffer = Hyperion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
+        const Hyperion::Ref<Hyperion::IndexBuffer> indexBuffer = Hyperion::IndexBuffer::Create(
+	        indices, sizeof(indices) / sizeof(uint32_t));
         m_VertexArray->SetIndexBuffer(indexBuffer);
 
         m_SquareVA = Hyperion::VertexArray::Create();
@@ -51,8 +50,8 @@ public:
             -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
         };
 
-        Hyperion::Ref<Hyperion::VertexBuffer> squareVB;
-        squareVB = Hyperion::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
+        const Hyperion::Ref<Hyperion::VertexBuffer> squareVB = Hyperion::VertexBuffer::Create(
+	        squareVertices, sizeof(squareVertices));
 
         squareVB->SetLayout({
             {Hyperion::ShaderDataType::Float3, "a_Position"},
@@ -62,8 +61,8 @@ public:
 
         uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
-        Hyperion::Ref<Hyperion::IndexBuffer> squareIB;
-        squareIB = Hyperion::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
+        const Hyperion::Ref<Hyperion::IndexBuffer> squareIB = Hyperion::IndexBuffer::Create(
+	        squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 
         m_SquareVA->SetIndexBuffer(squareIB);
 
