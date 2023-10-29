@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Runtime/Core/Window.hpp"
-
 #include "Runtime/Renderer/GraphicsContext.hpp"
 
 #include <GLFW/glfw3.h>
@@ -12,7 +11,7 @@ namespace Hyperion {
 	{
 	public:
 		WindowsWindow(const WindowProps& props);
-		virtual ~WindowsWindow();
+		~WindowsWindow() override;
 
 		void OnUpdate() override;
 
@@ -21,14 +20,15 @@ namespace Hyperion {
 
 		// Window attributes
 		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+		
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
-		inline virtual void* GetNativeWindow() const { return m_Window; }
+		void* GetNativeWindow() const override { return m_Window; }
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
-	private:
+		
 		GLFWwindow* m_Window;
 		GraphicsContext*  m_Context;
 

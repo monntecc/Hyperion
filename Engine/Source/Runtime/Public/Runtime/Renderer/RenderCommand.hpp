@@ -27,6 +27,11 @@ namespace Hyperion {
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
 
+		static void SetViewport(const int x, const int y, const uint32_t width, const uint32_t height)
+		{
+			s_RendererAPI->SetViewport(x, y, width, height);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

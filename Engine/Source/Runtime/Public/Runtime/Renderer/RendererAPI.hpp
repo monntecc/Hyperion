@@ -10,7 +10,7 @@ namespace Hyperion {
 	{
 	public:
 		virtual ~RendererAPI() = default;
-
+		
 		enum class API
 		{
 			None = 0,
@@ -20,6 +20,8 @@ namespace Hyperion {
 		};
 
 		virtual void Init() = 0;
+		
+		virtual void SetViewport(int x, int y, uint32_t width, uint32_t height) = 0;
 		
 		virtual void SetClearColor(const glm::vec4& color) = 0;
 		virtual void Clear() = 0;

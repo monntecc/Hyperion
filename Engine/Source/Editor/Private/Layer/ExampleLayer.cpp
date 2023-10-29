@@ -5,7 +5,7 @@
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
-ExampleLayer::ExampleLayer() : Layer("Example"), m_CameraController(1280.0f / 720.0f, true)
+ExampleLayer::ExampleLayer() : Layer("Example"), m_CameraController(1280.0f / 720.0f)
 {
 	m_VertexArray = Hyperion::VertexArray::Create();
 
@@ -183,7 +183,7 @@ void ExampleLayer::OnUpdate(Hyperion::Timestep timestep)
     // Triangle
     // Hyperion::Renderer::Submit(m_Shader, m_VertexArray);
 
-    Hyperion::Renderer::EndScene();
+    Hyperion::Renderer::EndScene(); 
 }
 
 void ExampleLayer::OnEvent(Hyperion::Event& event)

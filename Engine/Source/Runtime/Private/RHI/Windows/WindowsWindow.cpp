@@ -9,7 +9,7 @@
 
 namespace Hyperion {
 
-	static bool s_GLFWInitialized = false;
+	bool s_GLFWInitialized = false;
 
 	Window* Window::Create(const WindowProps& props)
 	{
@@ -36,8 +36,7 @@ namespace Hyperion {
 
 		if (!s_GLFWInitialized)
 		{
-			// TODO: glfwTerminate on system shutdown
-			int success = glfwInit();
+			const int success = glfwInit();
 
 			glfwSetErrorCallback([](int error, const char* description)
 			{
@@ -66,19 +65,20 @@ namespace Hyperion {
 			data.Height = height;
 
 			WindowResizeEvent event(width, height);
+			HR_CORE_WARN("Window resized to {0}, {1}", width, height);
 			data.EventCallback(event);
 		});
 
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 		{
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			WindowCloseEvent event;
 			data.EventCallback(event);
 		});
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			switch (action)
 			{
@@ -106,15 +106,15 @@ namespace Hyperion {
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
 		{
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-			KeyTypedEvent event(keycode);
+			KeyTypedEvent event(static_cast<int>(keycode));
 			data.EventCallback(event);
 		});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			switch (action)
 			{
@@ -130,12 +130,14 @@ namespace Hyperion {
 					data.EventCallback(event);
 					break;
 				}
+				
+				default: break;
 			}
 		});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
 		{
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			MouseScrolledEvent event(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			data.EventCallback(event);
@@ -143,7 +145,7 @@ namespace Hyperion {
 
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
 		{
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			MouseMovedEvent event(static_cast<float>(xPos), static_cast<float>(yPos));
 			data.EventCallback(event);
@@ -153,6 +155,9 @@ namespace Hyperion {
 	void WindowsWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
+
+		if (s_GLFWInitialized)
+			glfwTerminate();
 	}
 
 	void WindowsWindow::OnUpdate()

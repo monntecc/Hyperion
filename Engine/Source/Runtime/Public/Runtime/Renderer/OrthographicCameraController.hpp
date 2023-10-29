@@ -9,7 +9,6 @@
 #include "Runtime/Renderer/OrthographicCamera.hpp"
 
 namespace Hyperion {
-
     class HYPERION_API OrthographicCameraController
     {
     public:
@@ -21,6 +20,8 @@ namespace Hyperion {
         OrthographicCamera& GetCamera() { return m_Camera; }
         const OrthographicCamera& GetCamera() const { return m_Camera; }
 
+        float GetZoomLevel() const { return m_ZoomLevel; }
+        void SetZoomLevel(float level) { m_ZoomLevel = level; }
     private:
         bool OnMouseScrolled(const MouseScrolledEvent& event);
         bool OnWindowResized(const WindowResizeEvent& event);
@@ -35,5 +36,6 @@ namespace Hyperion {
         float m_CameraRotation = 0.0f;
         float m_CameraTranslationSpeed = 5.0f, m_CameraRotationSpeed = 180.0f;
     };
-    
+
+
 }

@@ -12,6 +12,11 @@ namespace Hyperion {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
+	void OpenGLRendererAPI::SetViewport(const int x, const int y, const uint32_t width, const uint32_t height)
+	{
+		glViewport(x ,y, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+	}
+
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
