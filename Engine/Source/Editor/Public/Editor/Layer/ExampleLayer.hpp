@@ -67,7 +67,7 @@ public:
 
         m_SquareVA->SetIndexBuffer(squareIB);
 
-        std::string vertexSrc = R"(
+        const std::string vertexSrc = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
@@ -87,7 +87,7 @@ public:
 			}
 		)";
 
-        std::string fragmentSrc = R"(
+        const std::string fragmentSrc = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
@@ -103,9 +103,9 @@ public:
 			}
 		)";
 
-        m_Shader = Hyperion::Shader::Create(vertexSrc, fragmentSrc);
+        m_Shader = Hyperion::Shader::Create("TriangleVertexPosColor", vertexSrc, fragmentSrc);
 
-        std::string flatColorVertexSrc = R"(
+        const std::string flatColorVertexSrc = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
@@ -122,7 +122,7 @@ public:
 			}
 		)";
 
-        std::string flatColorFragmentSrc = R"(
+        const std::string flatColorFragmentSrc = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
@@ -138,12 +138,16 @@ public:
 			}
 		)";
 
-        m_FlatColorShader = Hyperion::Shader::Create(flatColorVertexSrc, flatColorFragmentSrc);
-    	
-    	m_TextureShader = Hyperion::Shader::Create("Assets/Shaders/Texture.glsl");
+        m_FlatColorShader = Hyperion::Shader::Create("FlatColor", flatColorVertexSrc, flatColorFragmentSrc);
+
+    	const auto textureShader = m_ShaderLibrary.Load("Assets/Shaders/Texture.glsl");
 
     	m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
     	m_HyperionLogoTexture = Hyperion::Texture2D::Create("Assets/Textures/HyperionLogo.png");
+
+    	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(textureShader)->Bind();
+    	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(textureShader)->UploadUniformInt(
+			"u_Texture", 0);
     }
 
     void OnUpdate(Hyperion::Timestep timestep) override
@@ -179,10 +183,6 @@ public:
         std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3(
             "u_Color", m_SquareColor);
 
-    	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_TextureShader)->Bind();
-    	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_TextureShader)->UploadUniformInt(
-			"u_Texture", 0);
-
         for (int y = 0; y < 20; y++)
         {
             for (int x = 0; x < 20; x++)
@@ -193,10 +193,12 @@ public:
             }
         }
 
+    	const auto textureShader = m_ShaderLibrary.Get("Texture");
+
     	m_Texture->Bind();
-        Hyperion::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+        Hyperion::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
     	m_HyperionLogoTexture->Bind();
-    	Hyperion::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+    	Hyperion::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
     	
         // Triangle
         // Hyperion::Renderer::Submit(m_Shader, m_VertexArray);
@@ -217,10 +219,11 @@ public:
     }
 
 private:
+	Hyperion::ShaderLibrary m_ShaderLibrary;
     Hyperion::Ref<Hyperion::Shader> m_Shader;
     Hyperion::Ref<Hyperion::VertexArray> m_VertexArray;
 
-    Hyperion::Ref<Hyperion::Shader> m_FlatColorShader, m_TextureShader;
+    Hyperion::Ref<Hyperion::Shader> m_FlatColorShader;
     Hyperion::Ref<Hyperion::VertexArray> m_SquareVA;
 
 	Hyperion::Ref<Hyperion::Texture2D> m_Texture, m_HyperionLogoTexture;

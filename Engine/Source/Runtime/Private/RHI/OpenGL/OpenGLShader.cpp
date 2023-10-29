@@ -25,15 +25,28 @@ namespace Hyperion {
 	{
 		const std::string source = ReadFile(filepath);
 		const auto shaderSources = PreProcess(source);
+
 		Compile(shaderSources);
+
+		// Extract shader name from filepath
+		auto lastSlash = filepath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		const auto lastDot = filepath.rfind('.');
+		const auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+		m_Name = filepath.substr(lastSlash, count);
+
+		HR_CORE_TRACE("Shader '{0}' was compiled successfully!", m_Name);
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		: m_Name(name)
 	{
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
 		Compile(sources);
+
+		HR_CORE_TRACE("Shader '{0}' was compiled successfully!", m_Name);
 	}
 
 	OpenGLShader::~OpenGLShader()
@@ -136,7 +149,9 @@ namespace Hyperion {
 	{
 		// Get a program object.
 		const GLuint program = glCreateProgram();
-		std::vector<GLenum> glShaderIDs(shaderSources.size());
+		HR_CORE_ASSERT(shaderSources.size() <= 2, "Hyperion only supports 2 shaders for now!");
+		std::array<GLenum, 2> glShaderIDs;
+		int glShaderIDIndex = 0;
 
 		for(const auto& [type, source]: shaderSources)
 		{
@@ -172,7 +187,7 @@ namespace Hyperion {
 			// Shader are successfully compiled.
 			// Now time to link it into a program.
 			glAttachShader(program, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex++] = shader;
 		}
 		
 		// Link our program

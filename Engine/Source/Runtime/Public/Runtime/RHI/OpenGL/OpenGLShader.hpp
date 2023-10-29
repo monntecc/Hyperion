@@ -12,11 +12,13 @@ namespace Hyperion {
 	{
 	public:
 		OpenGLShader(const std::string& filepath);
-		OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
+		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 		~OpenGLShader() override;
 
 		void Bind() const override;
 		void Unbind() const override;
+
+		const std::string& GetName() const override { return m_Name; }
 
 		void UploadUniformInt(const std::string& name, int value) const;
 		
@@ -34,6 +36,7 @@ namespace Hyperion {
 		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
 		
 		uint32_t m_RendererID;
+		std::string m_Name;
 	};
 
 }
