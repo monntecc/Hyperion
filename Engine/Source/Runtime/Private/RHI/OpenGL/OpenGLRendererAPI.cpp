@@ -34,6 +34,8 @@ namespace Hyperion {
 		glDrawElements(GL_TRIANGLES, 
 		    static_cast<GLsizei>(vertexArray->GetIndexBuffer()->GetCount()), 
 			GL_UNSIGNED_INT, nullptr);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 }
