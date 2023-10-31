@@ -127,11 +127,11 @@ namespace Hyperion
         {
             in.seekg(0, std::ios::end);
             const size_t size = in.tellg();
-            if (size != -1)
+            if (static_cast<int>(size) != -1)
             {
                 result.resize(size);
                 in.seekg(0, std::ios::beg);
-                in.read(&result[0], size);
+                in.read(result.data(), static_cast<std::streamsize>(size));
                 in.close();
             }
             else
