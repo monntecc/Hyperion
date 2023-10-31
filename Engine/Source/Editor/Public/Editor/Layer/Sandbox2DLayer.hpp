@@ -19,7 +19,8 @@ private:
 
     // TODO: Temporary
     Hyperion::Ref<Hyperion::VertexArray> m_SquareVA;
-    Hyperion::Ref<Hyperion::Shader> m_FlatColorShader;
+    Hyperion::Ref<Hyperion::Shader> m_FlatColorShader, m_TextureShader;
+    Hyperion::Ref<Hyperion::Texture2D> m_CheckerboardTexture;
     
     glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };

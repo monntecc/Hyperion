@@ -23,4 +23,4 @@ namespace Hyperion {
 		unsigned int m_LayerInsertIndex = 0;
 	};
 
-}
+} 

@@ -3,8 +3,6 @@
 #include "Runtime/Renderer/Renderer.hpp"
 #include "Runtime/Renderer/Renderer2D.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLShader.hpp"
-
 namespace Hyperion {
 
 	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<SceneData>();
@@ -33,9 +31,8 @@ namespace Hyperion {
 		const Ref<VertexArray>& vertexArray, const glm::mat4 transform)
 	{
 		shader->Bind();
-		 std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", 
-			s_SceneData->ViewProjectionMatrix); // ViewProjection is the view projection matrix
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Transform", transform); // Transform is the model matrix
+		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix); // ViewProjection is the view projection matrix
+		shader->SetMat4("u_Transform", transform); // Transform is the model matrix
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
