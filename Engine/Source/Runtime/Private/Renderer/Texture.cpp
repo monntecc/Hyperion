@@ -12,7 +12,7 @@ namespace Hyperion {
         switch (Renderer::GetAPI())
         {
         case RendererAPI::API::OpenGL:
-            return std::make_shared<OpenGLTexture2D>(path);
+            return CreateRef<OpenGLTexture2D>(path);
 
         case RendererAPI::API::None:    
             HR_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
@@ -28,7 +28,7 @@ namespace Hyperion {
         switch (Renderer::GetAPI())
         {
         case RendererAPI::API::OpenGL:
-            return std::make_shared<OpenGLTexture2D>(width, height);
+            return CreateRef<OpenGLTexture2D>(width, height);
 
         case RendererAPI::API::None:    
             HR_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");

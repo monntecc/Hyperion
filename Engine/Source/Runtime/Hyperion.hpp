@@ -2,6 +2,8 @@
 
 // For use by Hyperion applications
 
+#include "Runtime/Core/Core.hpp"
+
 #include "Runtime/Core/Application.hpp"
 #include "Runtime/Core/Layer.hpp"
 #include "Runtime/Core/Log.hpp"

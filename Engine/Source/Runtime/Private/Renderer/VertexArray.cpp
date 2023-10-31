@@ -12,7 +12,7 @@ namespace Hyperion {
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLVertexArray>();
+			return CreateRef<OpenGLVertexArray>();
 
 		case RendererAPI::API::None:    
 			HR_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");

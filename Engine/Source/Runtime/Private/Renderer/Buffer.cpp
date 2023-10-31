@@ -12,7 +12,7 @@ namespace Hyperion {
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::OpenGL:
-				return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+				return CreateRef<OpenGLVertexBuffer>(vertices, size);
 
 			case RendererAPI::API::None:
 				HR_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
@@ -28,7 +28,7 @@ namespace Hyperion {
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLIndexBuffer>(indices, count);
+			return CreateRef<OpenGLIndexBuffer>(indices, count);
 
 		case RendererAPI::API::None:
 			HR_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
