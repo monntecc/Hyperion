@@ -43,7 +43,6 @@
 	#error "Unknown platform!"
 #endif // End of platform detection
 
-
 // DLL support
 #ifdef HR_PLATFORM_WINDOWS
 	#if HR_DYNAMIC_LINK

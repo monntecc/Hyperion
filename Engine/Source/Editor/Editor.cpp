@@ -22,12 +22,18 @@ Hyperion::Application* Hyperion::CreateApplication()
 int main(int argc, char** argv)
 {
 	Hyperion::Log::Init();
-	HR_CORE_WARN("Initialized Log!");
-	HR_INFO("Hello from Hyperion!");
 
+	HR_PROFILE_BEGIN_SESSION("Startup", "HyperionProfile-Startup.json");
 	const auto app = Hyperion::CreateApplication();
+	HR_PROFILE_END_SESSION();
+	
+	HR_PROFILE_BEGIN_SESSION("Startup", "HyperionProfile-Runtime.json");
 	app->Run();
+	HR_PROFILE_END_SESSION();
+	
+	HR_PROFILE_BEGIN_SESSION("Startup", "HyperionProfile-Shutdown.json");
 	delete app;
-
+	HR_PROFILE_END_SESSION();
+	
 	return FALSE;
 }

@@ -9,18 +9,33 @@ Sandbox2DLayer::Sandbox2DLayer() : Layer("Sandbox2DLayer"), m_CameraController(1
 
 void Sandbox2DLayer::OnUpdate(Hyperion::Timestep timestep)
 {
-    m_CameraController.OnUpdate(timestep);
+    HR_PROFILE_FUNCTION();
 
-    Hyperion::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
-    Hyperion::RenderCommand::Clear();
+    // Update
+    {
+        HR_PROFILE_SCOPE("CameraController::OnUpdate");
+        m_CameraController.OnUpdate(timestep);
+    }
 
-    Hyperion::Renderer2D::BeginScene(m_CameraController.GetCamera());
-    // Draw a quads
-    Hyperion::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
-    Hyperion::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
-    // Draw a texture
-    Hyperion::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture);
-    Hyperion::Renderer2D::EndScene(); 
+    // Render
+    {
+        HR_PROFILE_SCOPE("Renderer Preperation");
+        Hyperion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+        Hyperion::RenderCommand::Clear();   
+    }
+
+
+    // Draw quads
+    {
+        HR_PROFILE_SCOPE("Renderer Draw");
+        Hyperion::Renderer2D::BeginScene(m_CameraController.GetCamera());
+        // Draw a quads
+        Hyperion::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
+        Hyperion::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
+        // Draw a texture
+        Hyperion::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture);
+        Hyperion::Renderer2D::EndScene(); 
+    }
 }
 
 void Sandbox2DLayer::OnEvent(Hyperion::Event& event)
@@ -30,8 +45,11 @@ void Sandbox2DLayer::OnEvent(Hyperion::Event& event)
 
 void Sandbox2DLayer::OnImGuiRender()
 {
+    HR_PROFILE_FUNCTION();
+    
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+    
     ImGui::End();
 }
 
