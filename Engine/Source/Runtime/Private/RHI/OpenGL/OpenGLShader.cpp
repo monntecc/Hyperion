@@ -126,10 +126,18 @@ namespace Hyperion
         if (std::ifstream in(filepath, std::ios::in, std::ios::binary); in)
         {
             in.seekg(0, std::ios::end);
-            result.resize(in.tellg());
-            in.seekg(0, std::ios::beg);
-            in.read(result.data(), static_cast<std::streamsize>(result.size()));
-            in.close();
+            const size_t size = in.tellg();
+            if (size != -1)
+            {
+                result.resize(size);
+                in.seekg(0, std::ios::beg);
+                in.read(&result[0], size);
+                in.close();
+            }
+            else
+            {
+                HR_CORE_ERROR("Could not read from file '{0}'", filepath);
+            }
         }
         else
         {
