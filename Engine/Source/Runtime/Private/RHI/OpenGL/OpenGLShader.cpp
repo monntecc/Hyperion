@@ -222,7 +222,10 @@ namespace Hyperion {
 
 		// Always detach shaders after a successful link.
 		for (const auto id : glShaderIDs)
+		{
 			glDetachShader(program, id);
+			glDeleteShader(id); // Prevent shader from being leaked
+		}
 
 		m_RendererID = program;
 	}
