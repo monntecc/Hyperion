@@ -9,7 +9,7 @@
 
 namespace Hyperion {
 
-	bool s_GLFWInitialized = false;
+	static uint32_t s_GLFWWindowCount = 0;
 
 	Window* Window::Create(const WindowProps& props)
 	{
@@ -34,8 +34,9 @@ namespace Hyperion {
 
 		HR_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		if (!s_GLFWInitialized)
+		if (s_GLFWWindowCount == 0)
 		{
+			HR_CORE_INFO("Initializing GLFW");
 			const int success = glfwInit();
 
 			glfwSetErrorCallback([](int error, const char* description)
@@ -45,7 +46,7 @@ namespace Hyperion {
 
 			HR_CORE_ASSERT(success, "Could not initialize GLFW!");
 
-			s_GLFWInitialized = true;
+			++s_GLFWWindowCount;
 		}
 
 		m_Window = glfwCreateWindow(static_cast<int>(props.Width), 
@@ -154,10 +155,17 @@ namespace Hyperion {
 	
 	void WindowsWindow::Shutdown()
 	{
-		glfwDestroyWindow(m_Window);
+		--s_GLFWWindowCount;
+		
+		if (m_Window != nullptr) {
+			glfwDestroyWindow(m_Window);
+		}
 
-		if (s_GLFWInitialized)
+		if (s_GLFWWindowCount == 0)
+		{
+			HR_CORE_INFO("Terminating GLFW...");
 			glfwTerminate();
+		}
 	}
 
 	void WindowsWindow::OnUpdate()
