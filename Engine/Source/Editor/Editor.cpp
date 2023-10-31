@@ -27,11 +27,11 @@ int main(int argc, char** argv)
 	const auto app = Hyperion::CreateApplication();
 	HR_PROFILE_END_SESSION();
 	
-	HR_PROFILE_BEGIN_SESSION("Startup", "HyperionProfile-Runtime.json");
+	HR_PROFILE_BEGIN_SESSION("Runtime", "HyperionProfile-Runtime.json");
 	app->Run();
 	HR_PROFILE_END_SESSION();
 	
-	HR_PROFILE_BEGIN_SESSION("Startup", "HyperionProfile-Shutdown.json");
+	HR_PROFILE_BEGIN_SESSION("Shutdown", "HyperionProfile-Shutdown.json");
 	delete app;
 	HR_PROFILE_END_SESSION();
 	

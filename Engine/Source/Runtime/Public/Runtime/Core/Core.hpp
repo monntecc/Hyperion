@@ -59,7 +59,7 @@
 #endif // End of DLL support
 
 #ifndef HR_DEBUG
-	#define HR_ENABLE_ASSERTS
+	#define HR_ENABLE_ASSERTS 1
 #endif // HR_DEBUG
 
 #ifdef HR_ENABLE_ASSERTS
