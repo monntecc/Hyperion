@@ -1,7 +1,5 @@
 #include "Editor/Layer/ExampleLayer.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLShader.hpp"
-
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -135,9 +133,8 @@ ExampleLayer::ExampleLayer() : Layer("Example"), m_CameraController(1280.0f / 72
 	m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
 	m_HyperionLogoTexture = Hyperion::Texture2D::Create("Assets/Textures/HyperionLogo.png");
 
-	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(textureShader)->Bind();
-	std::dynamic_pointer_cast<Hyperion::OpenGLShader>(textureShader)->UploadUniformInt(
-		"u_Texture", 0);
+	textureShader->Bind();
+	textureShader->SetInt("u_Texture", 0);
 }
 
 
@@ -159,9 +156,8 @@ void ExampleLayer::OnUpdate(Hyperion::Timestep timestep)
 
     const static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-    std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_FlatColorShader)->Bind();
-    std::dynamic_pointer_cast<Hyperion::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3(
-        "u_Color", m_SquareColor);
+    m_FlatColorShader->Bind();
+    m_FlatColorShader->SetFloat3("u_Color", m_SquareColor);
 
     for (int y = 0; y < 20; y++)
     {

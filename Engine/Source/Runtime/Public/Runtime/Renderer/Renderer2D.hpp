@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Runtime/Renderer/OrthographicCamera.hpp"
+#include "Hyperion.hpp";
 
 namespace Hyperion {
 

@@ -20,6 +20,11 @@ namespace Hyperion {
 
 		const std::string& GetName() const override { return m_Name; }
 
+		void SetMat4(const std::string& name, const glm::mat4& value) const override;
+		void SetFloat3(const std::string& name, const glm::vec3& value) const override;
+		void SetFloat4(const std::string& name, const glm::vec4& value) const override;
+		void SetInt(const std::string& name, int value) const override;
+
 		void UploadUniformInt(const std::string& name, int value) const;
 		
 		void UploadUniformFloat(const std::string& name, float value) const;

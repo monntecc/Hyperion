@@ -37,7 +37,7 @@ namespace Hyperion {
 		std::string Name;
 		ShaderDataType Type;
 		uint32_t Size;
-		size_t Offset;
+		uintptr_t Offset;
 		bool Normalized;
 
 		BufferElement() : Type(ShaderDataType::None), Size(0), Offset(0), Normalized(false) {}
@@ -91,7 +91,7 @@ namespace Hyperion {
 	private:
 		void CalculateOffsetsAndStride()
 		{
-			size_t offset = 0;
+			uintptr_t offset = 0;
 			m_Stride = 0;
 			for (auto& element : m_Elements)
 			{

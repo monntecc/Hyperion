@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 namespace Hyperion {
 
 	class HYPERION_API Shader
@@ -14,6 +16,11 @@ namespace Hyperion {
 
 		static Ref<Shader> Create(const std::string& filepath);
 		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+
+		virtual void SetMat4(const std::string& name, const glm::mat4& value) const = 0;
+		virtual void SetFloat3(const std::string& name, const glm::vec3& value) const = 0;
+		virtual void SetFloat4(const std::string& name, const glm::vec4& value) const = 0;
+		virtual void SetInt(const std::string& name, int value) const = 0;
 	};
 
 	class HYPERION_API ShaderLibrary
