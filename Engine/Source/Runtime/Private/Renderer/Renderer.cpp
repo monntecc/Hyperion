@@ -6,7 +6,7 @@
 
 namespace Hyperion {
 
-	Renderer::SceneData* Renderer::s_SceneData = new SceneData;
+	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<SceneData>();
 
 	void Renderer::Init()
 	{
