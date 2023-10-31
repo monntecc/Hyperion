@@ -5,26 +5,38 @@
 #include "Runtime/Core/Input.hpp"
 #include "Runtime/Core/KeyCodes.hpp"
 
-namespace Hyperion {
-    
+namespace Hyperion
+{
     OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
         : m_AspectRatio(aspectRatio),
-        m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel),
-        m_Rotation(rotation)
+          m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel),
+          m_Rotation(rotation)
     {
     }
 
     void OrthographicCameraController::OnUpdate(Timestep ts)
     {
         if (Input::IsKeyPressed(HR_KEY_A))
-            m_CameraPosition.x -= m_CameraTranslationSpeed * ts;
+        {
+            m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+            m_CameraPosition.y -= sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+        }
         else if (Input::IsKeyPressed(HR_KEY_D))
-            m_CameraPosition.x += m_CameraTranslationSpeed * ts;
+        {
+            m_CameraPosition.x += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+            m_CameraPosition.y += sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+        }
 
         if (Input::IsKeyPressed(HR_KEY_W))
-            m_CameraPosition.y += m_CameraTranslationSpeed * ts;
+        {
+            m_CameraPosition.x += -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+            m_CameraPosition.y += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+        }
         else if (Input::IsKeyPressed(HR_KEY_S))
-            m_CameraPosition.y -= m_CameraTranslationSpeed * ts;
+        {
+            m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+            m_CameraPosition.y -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+        }
 
         if (m_Rotation)
         {
@@ -32,6 +44,11 @@ namespace Hyperion {
                 m_CameraRotation += m_CameraRotationSpeed * ts;
             if (Input::IsKeyPressed(HR_KEY_E))
                 m_CameraRotation -= m_CameraRotationSpeed * ts;
+
+            if (m_CameraRotation > 180.0f)
+                m_CameraRotation -= 360.0f;
+            else if (m_CameraRotation <= -180.0f)
+                m_CameraRotation += 360.0f;
 
             m_Camera.SetRotation(m_CameraRotation);
         }
@@ -61,5 +78,4 @@ namespace Hyperion {
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
         return false;
     }
-    
 }
