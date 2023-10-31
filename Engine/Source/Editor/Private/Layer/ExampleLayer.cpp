@@ -152,7 +152,7 @@ void ExampleLayer::OnUpdate(Hyperion::Timestep timestep)
 {
 	m_CameraController.OnUpdate(timestep);
 	
-    Hyperion::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+    Hyperion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f,  1 });
     Hyperion::RenderCommand::Clear();
 
     Hyperion::Renderer::BeginScene(m_CameraController.GetCamera());

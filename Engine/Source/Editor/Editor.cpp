@@ -1,11 +1,13 @@
-#include "Editor/Layer/ExampleLayer.hpp"
+// #include "Editor/Layer/ExampleLayer.hpp"
+#include "Editor/Layer/Sandbox2DLayer.hpp"
 
 class Editor final : public Hyperion::Application
 {
 public:
 	Editor()
 	{
-		PushLayer(new ExampleLayer());
+		// PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2DLayer());
 	}
 
 	~Editor() override = default;
