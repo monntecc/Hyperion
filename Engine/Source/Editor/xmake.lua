@@ -30,11 +30,6 @@ target("Editor")
     -- Add deps
     add_deps("Runtime", "glm", "spdlog") 
 
-    -- Set defines and system specific settings
-    if is_plat("windows") then
-        add_defines("HR_PLATFORM_WINDOWS")
-    end
-
     -- Set configurations
     if is_mode("debug") then
         add_defines("HR_DEBUG")

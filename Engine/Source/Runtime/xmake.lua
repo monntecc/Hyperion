@@ -30,7 +30,7 @@ target("Runtime")
     -- Add defines
     add_defines("_CRT_SECURE_NO_WARNINGS")
     add_defines("HR_PLATFORM_WINDOWS")
-    add_defines("HR_BUILD_DLL")
+--     add_defines("HR_BUILD_DLL")
     add_defines("GLFW_INCLUDE_NONE")
 
     -- Link libraries
@@ -49,9 +49,4 @@ target("Runtime")
         add_defines("HR_RELEASE")
         set_symbols("hidden")
         set_optimize("fastest")
-    end
-
-    -- Set system version on Windows
-    if is_plat("windows") then
-        add_defines("HR_PLATFORM_WINDOWS")
     end
