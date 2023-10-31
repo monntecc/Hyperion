@@ -13,6 +13,7 @@
 
 // ------------------- Renderer -------------------
 #include "Runtime/Renderer/Renderer.hpp"
+#include "Runtime/Renderer/Renderer2D.hpp"
 #include "Runtime/Renderer/RenderCommand.hpp"
 
 #include "Runtime/Renderer/Buffer.hpp"

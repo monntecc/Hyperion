@@ -1,6 +1,7 @@
 #include "pch.hpp"
 
 #include "Runtime/Renderer/Renderer.hpp"
+#include "Runtime/Renderer/Renderer2D.hpp"
 
 #include "Runtime/RHI/OpenGL/OpenGLShader.hpp"
 
@@ -11,6 +12,7 @@ namespace Hyperion {
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
+		Renderer2D::Init();
 	}
 
 	void Renderer::OnWindowResize(const uint32_t width, const uint32_t height)
