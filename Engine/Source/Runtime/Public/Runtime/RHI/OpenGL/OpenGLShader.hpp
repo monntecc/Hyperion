@@ -39,6 +39,8 @@ namespace Hyperion {
 		static std::string ReadFile(const std::string& filepath);
 		static std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
 		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
+
+		std::unordered_map<std::string, GLint> uniformMap = std::unordered_map<std::string, GLint>();
 		
 		uint32_t m_RendererID;
 		std::string m_Name;

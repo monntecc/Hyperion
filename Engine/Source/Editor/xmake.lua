@@ -26,9 +26,9 @@ target("Editor")
     
     -- Add extra files
     add_extrafiles("Assets/**/*.*")
-
+    
     -- Add deps
-    add_deps("Runtime", "glm", "spdlog") 
+    add_deps("Runtime", "glm", "spdlog", "Tracy") 
 
     -- Set configurations
     if is_mode("debug") then
@@ -41,4 +41,7 @@ target("Editor")
         add_defines("HR_RELEASE")
         set_symbols("hidden")
         set_optimize("fastest")
+        
+        -- Enable tracy only in Release mode
+        add_defines("TRACY_ENABLE")
     end

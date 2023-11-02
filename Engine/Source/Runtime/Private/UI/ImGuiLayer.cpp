@@ -10,6 +10,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <Tracy.hpp>
+
 namespace Hyperion {
 
 	ImGuiLayer::ImGuiLayer()
@@ -19,6 +21,8 @@ namespace Hyperion {
 
 	void ImGuiLayer::OnAttach()
 	{
+		ZoneScoped;
+		
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 
@@ -48,6 +52,8 @@ namespace Hyperion {
 
 	void ImGuiLayer::OnDetach()
 	{
+		ZoneScoped;
+		
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -55,6 +61,8 @@ namespace Hyperion {
 
 	void ImGuiLayer::Begin()
 	{
+		ZoneScoped;
+		
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -62,23 +70,32 @@ namespace Hyperion {
 
 	void ImGuiLayer::End()
 	{
+		
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), 
 			static_cast<float>(app.GetWindow().GetHeight()));
 
 		// Rendering
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		{
+			ZoneScopedN("ImGui Render");
+			
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		}
 
 		// Update and Render additional Platform Windows (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
 		// ImGuiIO& io = ImGui::GetIO(); (void)io;
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			GLFWwindow* currentContext = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(currentContext);
+			ZoneScopedN("ImGui Update and Render");
+			
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				GLFWwindow* currentContext = glfwGetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+				glfwMakeContextCurrent(currentContext);
+			}
 		}
 	}
 

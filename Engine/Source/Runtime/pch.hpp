@@ -14,7 +14,6 @@
 #include <unordered_set>
 
 #include <Runtime/Core/Log.hpp>
-#include <Runtime/Debug/Instrumentor.hpp>
 
 #ifdef HR_PLATFORM_WINDOWS
 	#include <Windows.h>

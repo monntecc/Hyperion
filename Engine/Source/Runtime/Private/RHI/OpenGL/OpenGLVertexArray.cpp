@@ -4,6 +4,8 @@
 
 #include <glad/glad.h>
 
+#include <Tracy.hpp>
+
 namespace Hyperion {
 
 	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
@@ -31,26 +33,36 @@ namespace Hyperion {
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		ZoneScoped;
+		
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
+		ZoneScoped;
+		
 		glDeleteVertexArrays(1, &m_RendererID);
 	} 
 
 	void OpenGLVertexArray::Bind() const
 	{
+		ZoneScoped;
+	
 		glBindVertexArray(m_RendererID);
 	}
 
 	void OpenGLVertexArray::Unbind() const
 	{
+		ZoneScoped;
+		
 		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
+		ZoneScoped;
+		
 		HR_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
 		glBindVertexArray(m_RendererID);
@@ -77,6 +89,8 @@ namespace Hyperion {
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
+		ZoneScoped;
+		
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
 		

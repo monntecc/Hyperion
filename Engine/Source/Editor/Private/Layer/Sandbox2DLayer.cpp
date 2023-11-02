@@ -3,23 +3,22 @@
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <Tracy.hpp>
+
 Sandbox2DLayer::Sandbox2DLayer() : Layer("Sandbox2DLayer"), m_CameraController(1280.0f / 720.0f)
 {
 }
 
 void Sandbox2DLayer::OnUpdate(Hyperion::Timestep timestep)
 {
-    HR_PROFILE_FUNCTION();
-
+    FrameMarkNamed("Sandbox2DLayer::OnUpdate");
+    
     // Update
-    {
-        HR_PROFILE_SCOPE("CameraController::OnUpdate");
-        m_CameraController.OnUpdate(timestep);
-    }
+    m_CameraController.OnUpdate(timestep);
 
     // Render
     {
-        HR_PROFILE_SCOPE("Renderer Preperation");
+        ZoneScoped;
         Hyperion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         Hyperion::RenderCommand::Clear();   
     }
@@ -27,7 +26,7 @@ void Sandbox2DLayer::OnUpdate(Hyperion::Timestep timestep)
 
     // Draw quads
     {
-        HR_PROFILE_SCOPE("Renderer Draw");
+        ZoneScoped;
         Hyperion::Renderer2D::BeginScene(m_CameraController.GetCamera());
         // Draw a quads
         Hyperion::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
@@ -40,12 +39,14 @@ void Sandbox2DLayer::OnUpdate(Hyperion::Timestep timestep)
 
 void Sandbox2DLayer::OnEvent(Hyperion::Event& event)
 {
+    ZoneScoped;
+    
     m_CameraController.OnEvent(event);
 }
 
 void Sandbox2DLayer::OnImGuiRender()
 {
-    HR_PROFILE_FUNCTION();
+    ZoneScoped;
     
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
@@ -55,9 +56,12 @@ void Sandbox2DLayer::OnImGuiRender()
 
 void Sandbox2DLayer::OnAttach()
 {
+    ZoneScoped;
+    
     m_CheckerboardTexture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");  
 }
 
 void Sandbox2DLayer::OnDetach()
 {
+    ZoneScoped;
 }

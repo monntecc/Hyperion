@@ -5,6 +5,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <Tracy.hpp>
+
 namespace Hyperion {
 
 	#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -13,6 +15,8 @@ namespace Hyperion {
 
 	Application::Application()
 	{
+		ZoneScoped;
+		
 		HR_CORE_ASSERT(!s_Instance, "Application already exists");
 		s_Instance = this;
 
@@ -27,21 +31,29 @@ namespace Hyperion {
 
 	Application::~Application()
 	{
+		ZoneScoped;
+		
 		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
+		ZoneScoped;
+		
 		m_LayerStack.PushLayer(layer);
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
+		ZoneScoped;
+		
 		m_LayerStack.PushOverlay(layer);
 	}
 
 	void Application::OnEvent(Event& e)
 	{
+		ZoneScoped;
+		
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
@@ -56,6 +68,8 @@ namespace Hyperion {
 
 	void Application::Run()
 	{
+		ZoneScoped;
+		
 		while (m_Running)
 		{
 			const auto time = static_cast<float>(glfwGetTime()); // Platform::GetTime()
@@ -64,6 +78,8 @@ namespace Hyperion {
 
 			if (!m_Minimized)
 			{
+				ZoneScoped;
+				
 				for (Layer* layer : m_LayerStack)
 					layer->OnUpdate(timestep);
 			}
@@ -87,6 +103,8 @@ namespace Hyperion {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		ZoneScoped;
+		
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;

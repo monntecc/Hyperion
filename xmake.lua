@@ -21,6 +21,7 @@ includes("Thirdparty/Glad/xmake.lua")
 includes("Thirdparty/GLFW/xmake.lua")
 includes("Thirdparty/ImGui/xmake.lua")
 includes("Thirdparty/stb_image/xmake.lua")
+includes("Thirdparty/tracy/xmake.lua")
 
 -- Include internal libraries
 includes("Engine/Source/Runtime/xmake.lua")

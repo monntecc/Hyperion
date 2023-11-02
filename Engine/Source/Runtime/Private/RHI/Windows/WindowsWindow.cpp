@@ -7,6 +7,8 @@
 #include "Runtime/RHI/OpenGL/OpenGLContext.hpp"
 #include "Runtime/RHI/Windows/WindowsWindow.hpp"
 
+#include <Tracy.hpp>
+
 namespace Hyperion {
 
 	static uint32_t s_GLFWWindowCount = 0;
@@ -28,6 +30,8 @@ namespace Hyperion {
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		ZoneScoped;
+		
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -36,6 +40,8 @@ namespace Hyperion {
 
 		if (s_GLFWWindowCount == 0)
 		{
+			ZoneScoped;
+			
 			HR_CORE_INFO("Initializing GLFW");
 			const int success = glfwInit();
 
@@ -155,6 +161,8 @@ namespace Hyperion {
 	
 	void WindowsWindow::Shutdown()
 	{
+		ZoneScoped;
+		
 		glfwDestroyWindow(m_Window);
 		--s_GLFWWindowCount;
 
@@ -167,12 +175,16 @@ namespace Hyperion {
 
 	void WindowsWindow::OnUpdate()
 	{
+		ZoneScoped;
+		
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
+		ZoneScoped;
+		
 		if (enabled)
 			glfwSwapInterval(1);
 		else

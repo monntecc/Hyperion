@@ -6,8 +6,10 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace Hyperion
-{
+#include <Tracy.hpp>
+
+namespace Hyperion {
+    
     static GLenum ShaderTypeFromString(const std::string& type)
     {
         if (type == "vertex")
@@ -22,6 +24,8 @@ namespace Hyperion
 
     OpenGLShader::OpenGLShader(const std::string& filepath)
     {
+        ZoneScoped;
+
         const std::string source = ReadFile(filepath);
         const auto shaderSources = PreProcess(source);
 
@@ -40,6 +44,8 @@ namespace Hyperion
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
         : m_Name(name)
     {
+        ZoneScoped;
+
         std::unordered_map<GLenum, std::string> sources;
         sources[GL_VERTEX_SHADER] = vertexSrc;
         sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -50,77 +56,93 @@ namespace Hyperion
 
     OpenGLShader::~OpenGLShader()
     {
+        ZoneScoped;
+
         glDeleteProgram(m_RendererID);
     }
 
     void OpenGLShader::Bind() const
     {
+        ZoneScoped;
+
         glUseProgram(m_RendererID);
     }
 
     void OpenGLShader::Unbind() const
     {
+        ZoneScoped;
+
         glUseProgram(0);
     }
 
     void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value) const
     {
+        ZoneScoped;
+
         UploadUniformMat4(name, value);
     }
 
     void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value) const
     {
+        ZoneScoped;
+
         UploadUniformFloat3(name, value);
     }
 
     void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value) const
     {
+        ZoneScoped;
+
         UploadUniformFloat4(name, value);
     }
 
     void OpenGLShader::SetInt(const std::string& name, int value) const
     {
+        ZoneScoped;
+
         UploadUniformInt(name, value);
     }
 
     void OpenGLShader::UploadUniformInt(const std::string& name, int value) const
     {
-        const GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        const GLint location = uniformMap.at(name);
         glUniform1i(location, value);
     }
 
     void OpenGLShader::UploadUniformFloat(const std::string& name, float value) const
     {
-        const GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        const GLint location = uniformMap.at(name);
         glUniform1f(location, value);
     }
 
     void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& values) const
     {
-        const GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        const GLint location = uniformMap.at(name);
         glUniform2f(location, values.x, values.y);
     }
 
     void OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& values) const
     {
-        const GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        const GLint location = uniformMap.at(name);
         glUniform3f(location, values.x, values.y, values.z);
     }
 
     void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix) const
     {
-        const GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        const GLint location = uniformMap.at(name);
         glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
     void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const
     {
-        const GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        const GLint location = uniformMap.at(name);
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
     std::string OpenGLShader::ReadFile(const std::string& filepath)
     {
+        ZoneScoped;
+
         std::string result;
 
         if (std::ifstream in(filepath, std::ios::in, std::ios::binary); in)
@@ -149,6 +171,8 @@ namespace Hyperion
 
     std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
     {
+        ZoneScoped;
+
         std::unordered_map<GLenum, std::string> shaderSources;
 
         const auto typeToken = "#type";
@@ -177,6 +201,8 @@ namespace Hyperion
 
     void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
     {
+        ZoneScoped;
+
         // Get a program object.
         const GLuint program = glCreateProgram();
         HR_CORE_ASSERT(shaderSources.size() <= 2, "Hyperion only supports 2 shaders for now!");
@@ -250,6 +276,28 @@ namespace Hyperion
             return;
         }
 
+        GLint count = 0;
+        glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
+        HR_CORE_ASSERT(count, "Count of uniforms must be more then 0!");
+
+        GLsizei bufSize = 0;
+        glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &bufSize);
+        HR_CORE_ASSERT(bufSize, "Active uniform buffer size cannot be 0!");
+
+        for (int i = 0; i < count; i++)
+        {
+            GLenum type;
+            const auto name = new GLchar[bufSize];
+            GLint size;
+            GLsizei length;
+
+            glGetActiveUniform(program, static_cast<GLuint>(i), bufSize, &length, &size, &type, name);
+
+            uniformMap.emplace(name, glGetUniformLocation(program, name));
+
+            delete[] name;
+        }
+
         // Always detach shaders after a successful link.
         for (const auto id : glShaderIDs)
         {
@@ -262,7 +310,9 @@ namespace Hyperion
 
     void OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& values) const
     {
-        const GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        ZoneScoped;
+
+        const GLint location = uniformMap.at(name);
         glUniform4f(location, values.x, values.y, values.z, values.w);
     }
 }

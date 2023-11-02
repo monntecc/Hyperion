@@ -5,6 +5,8 @@
 #include "Runtime/Core/Input.hpp"
 #include "Runtime/Core/KeyCodes.hpp"
 
+#include <Tracy.hpp>
+
 namespace Hyperion
 {
     OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
@@ -16,6 +18,8 @@ namespace Hyperion
 
     void OrthographicCameraController::OnUpdate(Timestep ts)
     {
+        ZoneScoped;
+        
         if (Input::IsKeyPressed(HR_KEY_A))
         {
             m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
@@ -59,6 +63,8 @@ namespace Hyperion
 
     void OrthographicCameraController::OnEvent(Event& e)
     {
+        ZoneScoped;
+        
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<MouseScrolledEvent>(HR_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
         dispatcher.Dispatch<WindowResizeEvent>(HR_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
@@ -66,6 +72,8 @@ namespace Hyperion
 
     bool OrthographicCameraController::OnMouseScrolled(const MouseScrolledEvent& event)
     {
+        ZoneScoped;
+        
         m_ZoomLevel -= event.GetYOffset() * 0.25f;
         m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -74,6 +82,8 @@ namespace Hyperion
 
     bool OrthographicCameraController::OnWindowResized(const WindowResizeEvent& event)
     {
+        ZoneScoped;
+        
         m_AspectRatio = static_cast<float>(event.GetWidth()) / static_cast<float>(event.GetHeight());
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
         return false;

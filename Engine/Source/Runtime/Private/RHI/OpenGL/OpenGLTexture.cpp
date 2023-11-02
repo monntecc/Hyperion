@@ -4,14 +4,19 @@
 
 #include <stb_image.h>
 
+#include <Tracy.hpp>
+
 namespace Hyperion
 {
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
         : m_Path(path)
     {
+        ZoneScoped;
+        
         int width, height, channels;
         stbi_set_flip_vertically_on_load(1);
         stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        
         HR_CORE_ASSERT(data, "Failed to load image!");
         m_Width = width;
         m_Height = height;
@@ -47,6 +52,8 @@ namespace Hyperion
     OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
         : m_Width(width), m_Height(height)
     {
+        ZoneScoped;
+        
         m_InternalFormat = GL_RGBA8;
         m_DataFormat = GL_RGBA;
 
@@ -62,11 +69,15 @@ namespace Hyperion
 
     OpenGLTexture2D::~OpenGLTexture2D()
     {
+        ZoneScoped;
+        
         glDeleteTextures(1, &m_RendererID);
     }
 
     void OpenGLTexture2D::SetData(void* data, uint32_t size)
     {
+        ZoneScoped;
+        
         // Check bytes per pixel (buffer must to be a size of entire texture) 
         uint32_t bytesPerPixel = m_DataFormat == GL_RGBA ? 4 : 3;
         HR_CORE_ASSERT(size == m_Width * m_Height * bytesPerPixel, "Data must be entire texture!");
@@ -77,6 +88,8 @@ namespace Hyperion
 
     void OpenGLTexture2D::Bind(uint32_t slot) const
     {
+        ZoneScoped;
+        
         glBindTextureUnit(slot, m_RendererID);
     }
 }

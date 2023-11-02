@@ -1,6 +1,8 @@
 // #include "Editor/Layer/ExampleLayer.hpp"
 #include "Editor/Layer/Sandbox2DLayer.hpp"
 
+#include <Tracy.hpp>
+
 class Editor final : public Hyperion::Application
 {
 public:
@@ -23,17 +25,11 @@ int main(int argc, char** argv)
 {
 	Hyperion::Log::Init();
 
-	HR_PROFILE_BEGIN_SESSION("Startup", "HyperionProfile-Startup.json");
+	ZoneScoped;
+
 	const auto app = Hyperion::CreateApplication();
-	HR_PROFILE_END_SESSION();
-	
-	HR_PROFILE_BEGIN_SESSION("Runtime", "HyperionProfile-Runtime.json");
 	app->Run();
-	HR_PROFILE_END_SESSION();
-	
-	HR_PROFILE_BEGIN_SESSION("Shutdown", "HyperionProfile-Shutdown.json");
 	delete app;
-	HR_PROFILE_END_SESSION();
-	
+
 	return FALSE;
 }

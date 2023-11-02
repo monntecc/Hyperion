@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <Tracy.hpp>
+
 namespace Hyperion {
 
 	OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
@@ -15,6 +17,8 @@ namespace Hyperion {
 
 	void OpenGLContext::Init()
 	{
+		ZoneScoped;
+		
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 		HR_CORE_ASSERT(status, "Failed to initialize Glad!");
@@ -36,6 +40,8 @@ namespace Hyperion {
 
 	void OpenGLContext::SwapBuffers()
 	{
+		ZoneScoped;
+		
 		glfwSwapBuffers(m_WindowHandle);
 	}
 

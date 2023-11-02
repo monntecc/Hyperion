@@ -35,7 +35,7 @@ target("Runtime")
 
     -- Link libraries
     add_linkdirs("$(projectdir)/binaries/target/$(host)/$(arch)/$(mode)")
-    add_deps("ImGui", "GLFW", "Glad", "stb_image", "glm", "spdlog")
+    add_deps("ImGui", "GLFW", "Glad", "stb_image", "glm", "spdlog", "Tracy")
     add_syslinks("opengl32")
 
     -- Set configurations
@@ -49,4 +49,7 @@ target("Runtime")
         add_defines("HR_RELEASE")
         set_symbols("hidden")
         set_optimize("fastest")
+        
+        -- Enable tracy only in Release mode
+        add_defines("TRACY_ENABLE")
     end

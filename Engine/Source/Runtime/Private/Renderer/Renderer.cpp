@@ -3,12 +3,16 @@
 #include "Runtime/Renderer/Renderer.hpp"
 #include "Runtime/Renderer/Renderer2D.hpp"
 
+#include <Tracy.hpp>
+
 namespace Hyperion {
 
 	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<SceneData>();
 
 	void Renderer::Init()
 	{
+		ZoneScoped;
+		
 		RenderCommand::Init();
 		Renderer2D::Init();
 	}
