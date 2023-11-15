@@ -1,7 +1,7 @@
 target("Runtime")
     set_kind("static")
     set_languages("cxx20")
-    set_arch("x64")
+    set_arch("x86_64")
     set_warnings("all")
     set_group("Source")
     
