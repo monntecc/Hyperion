@@ -9,6 +9,8 @@
 
 #include <Tracy.hpp>
 
+#include "Runtime/Renderer/Renderer.hpp"
+
 namespace Hyperion {
 
 	static uint32_t s_GLFWWindowCount = 0;
@@ -43,17 +45,22 @@ namespace Hyperion {
 			ZoneScoped;
 			
 			HR_CORE_INFO("Initializing GLFW");
-			const int success = glfwInit();
+			const int _ = glfwInit();
 
 			glfwSetErrorCallback([](int error, const char* description)
 			{
 				HR_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 			});
 
-			HR_CORE_ASSERT(success, "Could not initialize GLFW!");
+			HR_CORE_ASSERT(_, "Could not initialize GLFW!");
 
 			++s_GLFWWindowCount;
 		}
+
+		#if defined(HR_DEBUG)
+			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+		#endif
 
 		m_Window = glfwCreateWindow(static_cast<int>(props.Width), 
 			static_cast<int>(props.Height), m_Data.Title.c_str(), nullptr, nullptr);
@@ -72,7 +79,6 @@ namespace Hyperion {
 			data.Height = height;
 
 			WindowResizeEvent event(width, height);
-			HR_CORE_WARN("Window resized to {0}, {1}", width, height);
 			data.EventCallback(event);
 		});
 
