@@ -29,7 +29,7 @@
 // ------------------------------------------------
 
 // ------------ KeyCodes ------------
-#include "Runtime/Core/MouseButtonCodes.hpp"
+#include "Runtime/Core/MouseCodes.hpp"
 #include "Runtime/Events/MouseEvent.hpp"
 #include "Runtime/Events/ApplicationEvent.hpp"
 #include "Runtime/Events/KeyEvent.hpp"

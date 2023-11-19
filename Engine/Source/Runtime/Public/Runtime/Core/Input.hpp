@@ -2,6 +2,9 @@
 
 #include "Runtime/Core/Core.hpp"
 
+#include "Runtime/Core/KeyCodes.hpp"
+#include "Runtime/Core/MouseCodes.hpp"
+
 namespace Hyperion {
 
 	class HYPERION_API Input
@@ -11,10 +14,11 @@ namespace Hyperion {
 	public:
 		Input(const Input&) = delete;
 		Input& operator=(const Input&) = delete;
+		virtual ~Input() = default;
 		
-		static bool IsKeyPressed(int keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
+		static bool IsKeyPressed(KeyCode key) { return s_Instance->IsKeyPressedImpl(key); }
 
-		static bool IsMouseButtonPressed(int button) { return s_Instance->IsMouseButtonPressedImpl(button); }
+		static bool IsMouseButtonPressed(MouseCode button) { return s_Instance->IsMouseButtonPressedImpl(button); }
 
 		static std::pair<float, float> GetMousePosition() { return s_Instance->GetMousePositionImpl(); }
 
@@ -22,13 +26,10 @@ namespace Hyperion {
 		static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 
 	protected:
-		virtual bool IsKeyPressedImpl(int keycode) = 0;
-
-
-		virtual bool IsMouseButtonPressedImpl(int keycodebutton) = 0;
+		virtual bool IsKeyPressedImpl(KeyCode key) = 0;
+		virtual bool IsMouseButtonPressedImpl(MouseCode button) = 0;
 
 		virtual std::pair<float, float> GetMousePositionImpl() = 0;
-
 		virtual float GetMouseXImpl() = 0;
 		virtual float GetMouseYImpl() = 0;
 
