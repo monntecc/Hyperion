@@ -44,7 +44,7 @@ namespace Hyperion {
 		shader->SetMat4("u_Transform", transform); // Transform is the model matrix
 
 		vertexArray->Bind();
-		RenderCommand::DrawIndexed(vertexArray);
+		RenderCommand::DrawIndexed(vertexArray, vertexArray->GetIndexBuffer()->GetCount());
 	}
 
 }

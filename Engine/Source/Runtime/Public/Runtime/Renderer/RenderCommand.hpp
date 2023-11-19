@@ -22,9 +22,9 @@ namespace Hyperion {
 			s_RendererAPI->Clear();
 		}
 
-		static void DrawIndexed(const Ref<VertexArray>& vertexArray)
+		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
 		{
-			s_RendererAPI->DrawIndexed(vertexArray);
+			s_RendererAPI->DrawIndexed(vertexArray, count);
 		}
 
 		static void SetViewport(const int x, const int y, const uint32_t width, const uint32_t height)

@@ -40,6 +40,12 @@ namespace Hyperion {
 		static std::string ReadFile(const std::string& filepath);
 		static std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
 		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
+		GLint GetUniformLocation(const std::string& name) const
+		{
+			if (!uniformMap.contains(name))
+				HR_CORE_CRITICAL("Uniform '" + name + "' not found in shader!");
+			return uniformMap.at(name);
+		}
 
 		std::unordered_map<std::string, GLint> uniformMap = std::unordered_map<std::string, GLint>();
 		

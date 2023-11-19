@@ -112,37 +112,37 @@ namespace Hyperion {
 
     void OpenGLShader::UploadUniformInt(const std::string& name, int value) const
     {
-        const GLint location = uniformMap.at(name);
+        const GLint location = GetUniformLocation(name);
         glUniform1i(location, value);
     }
 
     void OpenGLShader::UploadUniformFloat(const std::string& name, float value) const
     {
-        const GLint location = uniformMap.at(name);
+        const GLint location = GetUniformLocation(name);
         glUniform1f(location, value);
     }
 
     void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& values) const
     {
-        const GLint location = uniformMap.at(name);
+        const GLint location = GetUniformLocation(name);
         glUniform2f(location, values.x, values.y);
     }
 
     void OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& values) const
     {
-        const GLint location = uniformMap.at(name);
+        const GLint location = GetUniformLocation(name);
         glUniform3f(location, values.x, values.y, values.z);
     }
 
     void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix) const
     {
-        const GLint location = uniformMap.at(name);
+        const GLint location = GetUniformLocation(name);
         glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
     void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const
     {
-        const GLint location = uniformMap.at(name);
+        const GLint location = GetUniformLocation(name);
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 

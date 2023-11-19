@@ -20,16 +20,19 @@ namespace Hyperion
         {
         case GL_DEBUG_SEVERITY_HIGH:
             HR_CORE_CRITICAL(message);
-            return;
+            break;
         case GL_DEBUG_SEVERITY_MEDIUM:
             HR_CORE_ERROR(message);
-            return;
+            break;
         case GL_DEBUG_SEVERITY_LOW:
             HR_CORE_WARN(message);
-            return;
+            break;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
             HR_CORE_TRACE(message);
-        default: break;
+            break;
+        default:
+            HR_CORE_INFO(message);
+            break;
         }
     }
 
@@ -65,12 +68,10 @@ namespace Hyperion
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
+    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
     {
-        glDrawElements(GL_TRIANGLES,
-                       static_cast<GLsizei>(vertexArray->GetIndexBuffer()->GetCount()),
-                       GL_UNSIGNED_INT, nullptr);
-
+        const GLsizei count = indexCount ? static_cast<GLsizei>(vertexArray->GetIndexBuffer()->GetCount()) : static_cast<GLsizei>(indexCount);
+        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 }
