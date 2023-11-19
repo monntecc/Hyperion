@@ -15,11 +15,6 @@ namespace Hyperion {
 
 	static uint32_t s_GLFWWindowCount = 0;
 
-	Scope<Window> Window::Create(const WindowProps& props)
-	{
-		return CreateScope<WindowsWindow>(props);
-	}
-
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
 		WindowsWindow::Init(props);
