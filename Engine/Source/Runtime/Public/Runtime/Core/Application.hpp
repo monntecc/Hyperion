@@ -9,6 +9,8 @@
 
 #include "Runtime/UI/ImGuiLayer.hpp"
 
+int main(int argc, char** argv);
+
 namespace Hyperion {
 
 	class HYPERION_API Application
@@ -16,9 +18,7 @@ namespace Hyperion {
 	public:
 		Application();
 		virtual ~Application();
-
-		void Run();
-
+		
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
@@ -27,6 +27,8 @@ namespace Hyperion {
 		static Application& Get() { return *s_Instance; }
 		Window& GetWindow() const { return *m_Window; }
 	private:
+		void Run();
+		
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 	
@@ -39,6 +41,8 @@ namespace Hyperion {
 		float m_LastFrameTime = 0.0f;
 	
 		static Application* s_Instance;
+
+		friend int ::main(int argc, char** argv);
 	};
 
 	// To be defined in client
