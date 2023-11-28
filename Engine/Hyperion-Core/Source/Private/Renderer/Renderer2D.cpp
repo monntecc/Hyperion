@@ -224,6 +224,9 @@ namespace Hyperion {
 
         if (textureIndex == 0.0f)
         {
+            if (s_Data.TextureSlotIndex >= RendererData::MaxTextureSlots)
+                FlushAndReset();
+
             textureIndex = static_cast<float>(s_Data.TextureSlotIndex);
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
             s_Data.TextureSlotIndex++;
@@ -312,6 +315,9 @@ namespace Hyperion {
 
         if (textureIndex == 0.0f)
         {
+            if (s_Data.TextureSlotIndex >= RendererData::MaxTextureSlots)
+                FlushAndReset();
+
             textureIndex = static_cast<float>(s_Data.TextureSlotIndex);
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
             s_Data.TextureSlotIndex++;
