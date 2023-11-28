@@ -12,19 +12,25 @@ namespace Hyperion {
 	{
 		switch (type)
 		{
-		case ShaderDataType::Float:    return GL_FLOAT;
-		case ShaderDataType::Float2:   return GL_FLOAT;
-		case ShaderDataType::Float3:   return GL_FLOAT;
-		case ShaderDataType::Float4:   return GL_FLOAT;
-		case ShaderDataType::Mat3:     return GL_FLOAT;
-		case ShaderDataType::Mat4:     return GL_FLOAT;
-		case ShaderDataType::Int:      return GL_INT;
-		case ShaderDataType::Int2:     return GL_INT;
-		case ShaderDataType::Int3:     return GL_INT;
-		case ShaderDataType::Int4:     return GL_INT;
-		case ShaderDataType::Bool:     return GL_BOOL;
+			case ShaderDataType::Float:
+			case ShaderDataType::Float2:
+			case ShaderDataType::Float3:
+			case ShaderDataType::Float4:
+			case ShaderDataType::Mat3:
+			case ShaderDataType::Mat4:
+				return GL_FLOAT;
 
-		case ShaderDataType::None:     break;
+			case ShaderDataType::Int:      
+			case ShaderDataType::Int2:     
+			case ShaderDataType::Int3:     
+			case ShaderDataType::Int4:
+				return GL_INT;
+
+			case ShaderDataType::Bool:     
+				return GL_BOOL;
+
+			case ShaderDataType::None:     
+				break;
 		}
 
 		HR_CORE_ASSERT(false, "Unknown ShaderDataType!");
@@ -72,15 +78,51 @@ namespace Hyperion {
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(index + m_VertexBufferIndexOffset);
-			glVertexAttribPointer(index + m_VertexBufferIndexOffset,
-				static_cast<GLint>(element.GetComponentCount()),
-				ShaderDataTypeToOpenGLBaseType(element.Type),
-				element.Normalized ? GL_TRUE : GL_FALSE,
-				layout.GetStride(),
-				reinterpret_cast<const void*>(element.Offset));
+			switch (element.Type)
+			{
+				case ShaderDataType::Float:
+				case ShaderDataType::Float2:
+				case ShaderDataType::Float3:
+				case ShaderDataType::Float4:
+				case ShaderDataType::Int:
+				case ShaderDataType::Int2:
+				case ShaderDataType::Int3:
+				case ShaderDataType::Int4:
+				case ShaderDataType::Bool:
+				{
+					glEnableVertexAttribArray(index);
+					glVertexAttribPointer(index,
+						static_cast<uint8_t>(element.GetComponentCount()),
+						ShaderDataTypeToOpenGLBaseType(element.Type),
+						element.Normalized ? GL_TRUE : GL_FALSE,
+						layout.GetStride(),
+						reinterpret_cast<const void*>(element.Offset));
+					index++;
+					break;
+				}
 
-			index++;
+				case ShaderDataType::Mat3:
+				case ShaderDataType::Mat4:
+				{
+					const auto count = static_cast<uint8_t>(element.GetComponentCount());
+					for (uint8_t i = 0; i < count; i++)
+					{
+						glEnableVertexAttribArray(index);
+						glVertexAttribPointer(index,
+							count,
+							ShaderDataTypeToOpenGLBaseType(element.Type),
+							element.Normalized ? GL_TRUE : GL_FALSE,
+							layout.GetStride(),
+							reinterpret_cast<const void*>(sizeof(float) * count * i));
+						glVertexAttribDivisor(index, 1);
+						index++;
+					}
+					break;
+				}
+
+				case ShaderDataType::None:
+					HR_CORE_ASSERT(false, "Unknown ShaderDataType!");
+				}
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);

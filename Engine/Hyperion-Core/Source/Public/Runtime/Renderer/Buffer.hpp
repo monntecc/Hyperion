@@ -55,8 +55,8 @@ namespace Hyperion {
 				case ShaderDataType::Float2:	return 2;
 				case ShaderDataType::Float3:	return 3;
 				case ShaderDataType::Float4:	return 4;
-				case ShaderDataType::Mat3:		return 3 * 3;
-				case ShaderDataType::Mat4:		return 4 * 4;
+				case ShaderDataType::Mat3:		return 3; // 3* float3
+				case ShaderDataType::Mat4:		return 4; // 4* float4
 				case ShaderDataType::Int:		return 1;
 				case ShaderDataType::Int2:		return 2;
 				case ShaderDataType::Int3:		return 3;
@@ -72,7 +72,7 @@ namespace Hyperion {
 	class HYPERION_API BufferLayout
 	{
 	public:
-		BufferLayout() {}
+		BufferLayout() = default;
 
 		BufferLayout(const std::initializer_list<BufferElement>& elements)
 			: m_Elements(elements)
