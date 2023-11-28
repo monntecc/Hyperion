@@ -133,8 +133,8 @@ ExampleLayer::ExampleLayer() : Layer("Example"), m_CameraController(1280.0f / 72
 	m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
 	m_HyperionLogoTexture = Hyperion::Texture2D::Create("Assets/Textures/HyperionLogo.png");
 
-	textureShader->Bind();
-	textureShader->SetInt("u_Texture", 0);
+	// textureShader->Bind();
+	// textureShader->SetIntArray("u_Textures", 0);
 }
 
 

@@ -110,10 +110,23 @@ namespace Hyperion {
         UploadUniformInt(name, value);
     }
 
+    void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t count) const
+    {
+        ZoneScoped;
+
+        UploadUniformIntArray(name, values, count);
+    }
+
     void OpenGLShader::UploadUniformInt(const std::string& name, int value) const
     {
         const GLint location = GetUniformLocation(name);
         glUniform1i(location, value);
+    }
+
+    void OpenGLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count) const
+    {
+        const GLint location = GetUniformLocation(name);
+        glUniform1iv(location, static_cast<GLsizei>(count), values);
     }
 
     void OpenGLShader::UploadUniformFloat(const std::string& name, float value) const
@@ -272,7 +285,7 @@ namespace Hyperion {
 
             // We don't need the program anymore.
             glDeleteProgram(program);
-            // Don't leak shaders either.
+            // Don't leak shader`s either.
             for (const auto id : glShaderIDs)
                 glDeleteShader(id);
 
@@ -299,13 +312,12 @@ namespace Hyperion {
             GLsizei length;
 
             glGetActiveUniform(program, static_cast<GLuint>(i), bufSize, &length, &size, &type, name);
-
             uniformMap.emplace(name, glGetUniformLocation(program, name));
 
             delete[] name;
         }
 
-        // Always detach shaders after a successful link.
+        // Always detach shader`s after a successful link.
         for (const auto id : glShaderIDs)
         {
             glDetachShader(program, id);

@@ -22,6 +22,7 @@ namespace Hyperion {
 		virtual void SetFloat4(const std::string& name, const glm::vec4& value) const = 0;
 		virtual void SetFloat(const std::string& name, float value) const = 0;
 		virtual void SetInt(const std::string& name, int value) const = 0;
+		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) const = 0;
 	};
 
 	class HYPERION_API ShaderLibrary

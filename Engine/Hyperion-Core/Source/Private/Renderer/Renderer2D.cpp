@@ -17,14 +17,16 @@ namespace Hyperion {
         glm::vec3 Position;
         glm::vec4 Color;
         glm::vec2 TexCoord;
-        // TODO: textureId, etc..
+        float TexIndex; // Texture index
+        float TilingFactor;
     };
     
     struct RendererData
     {
-        uint32_t MaxQuads = 10000;
-        uint32_t MaxVertices = MaxQuads * 4;
-        uint32_t MaxIndices = MaxQuads * 6;
+        const uint32_t MaxQuads = 10000;
+        const uint32_t MaxVertices = MaxQuads * 4;
+        const uint32_t MaxIndices = MaxQuads * 6;
+        static const uint32_t MaxTextureSlots = 32; // TODO: Render capabilities
         
         Ref<VertexArray> QuadVertexArray;
         Ref<VertexBuffer> QuadVertexBuffer;
@@ -35,6 +37,9 @@ namespace Hyperion {
         uint32_t QuadIndexCount = 0;
         QuadVertex* QuadVertexBufferBase = nullptr;
         QuadVertex* QuadVertexBufferPtr = nullptr;
+
+        std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
+        uint32_t TextureSlotIndex = 1; // 0  = white texture
     };
 
     static RendererData s_Data;
@@ -50,6 +55,8 @@ namespace Hyperion {
             {ShaderDataType::Float3, "a_Position"},
             {ShaderDataType::Float4, "a_Color"},
             {ShaderDataType::Float2, "a_TexCoord"},
+            {ShaderDataType::Float, "a_TexIndex"},
+            {ShaderDataType::Float, "a_TilingFactor"},
         });
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
         s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
@@ -78,9 +85,16 @@ namespace Hyperion {
         uint32_t whiteTextureData = 0xffffffff;
         s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
+        int32_t samplers[32];
+        for (int32_t i = 0; i < s_Data.MaxTextureSlots; i++)
+            samplers[i] = i;
+
         s_Data.TextureShader = Shader::Create("Assets/Shaders/Texture.glsl");
         s_Data.TextureShader->Bind();
-        // s_Data.TextureShader->SetInt("u_Texture", 0);
+        s_Data.TextureShader->SetIntArray("u_Textures", samplers, RendererData::MaxTextureSlots);
+
+        // Set white texture to first slot
+        s_Data.TextureSlots[0] = s_Data.WhiteTexture;
     }
 
     void Renderer2D::Shutdown()
@@ -97,6 +111,8 @@ namespace Hyperion {
 
         s_Data.QuadIndexCount = 0;
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+        s_Data.TextureSlotIndex = 1;
     }
 
     void Renderer2D::EndScene()
@@ -111,10 +127,15 @@ namespace Hyperion {
 
     void Renderer2D::Flush()
     {
-        ZoneScoped;
+	    ZoneScoped;
 
-        RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+	    // Bind textures
+	    for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+            s_Data.TextureSlots[i]->Bind(i);
+
+	    RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
     }
+
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
     {
@@ -125,24 +146,35 @@ namespace Hyperion {
     {
         ZoneScoped;
 
+        constexpr float textureIndex = 0.0f; // white texture
+        constexpr float tilingFactor = 0.0f; // tiling factor
+
         s_Data.QuadVertexBufferPtr->Position = position;
         s_Data.QuadVertexBufferPtr->Color = color;
         s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y, 0.0f };
         s_Data.QuadVertexBufferPtr->Color = color;
         s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y + size.y, 0.0f };
         s_Data.QuadVertexBufferPtr->Color = color;
         s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadVertexBufferPtr->Position = { position.x, position.y + size.y, 0.0f };
         s_Data.QuadVertexBufferPtr->Color = color;
         s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
@@ -169,16 +201,66 @@ namespace Hyperion {
     {
         ZoneScoped;
 
-        s_Data.TextureShader->SetFloat4("u_Color", tintColor); // bind white texture color
-        s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor); // bind tiling factor (multiplier)
-        texture->Bind();
+        constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-        const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(
-            glm::mat4(1.0f), {size.x, size.y, 1.0f});
-        s_Data.TextureShader->SetMat4("u_Transform", transform);
+        float textureIndex = 0.0f;
 
-        s_Data.QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
+        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+        {
+	        if (*s_Data.TextureSlots[i] == *texture.get())
+	        {
+                textureIndex = static_cast<float>(i);
+                break;
+	        }
+        }
+
+        if (textureIndex == 0.0f)
+        {
+            textureIndex = static_cast<float>(s_Data.TextureSlotIndex);
+            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+            s_Data.TextureSlotIndex++;
+        }
+
+        s_Data.QuadVertexBufferPtr->Position = position;
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y, 0.0f };
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y + size.y, 0.0f };
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = { position.x, position.y + size.y, 0.0f };
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadIndexCount += 6;
+
+        //s_Data.TextureShader->SetFloat4("u_Color", tintColor); // bind white texture color
+        //s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor); // bind tiling factor (multiplier)
+        //texture->Bind();
+
+        //const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(
+        //    glm::mat4(1.0f), {size.x, size.y, 1.0f});
+        //s_Data.TextureShader->SetMat4("u_Transform", transform);
+
+        //s_Data.QuadVertexArray->Bind();
+        //RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,

@@ -11,7 +11,6 @@ namespace Hyperion {
     public:
         OpenGLTexture2D(const std::string& path);
         OpenGLTexture2D(uint32_t width, uint32_t height);
-        
         ~OpenGLTexture2D() override;
         
         uint32_t GetWidth() const override { return m_Width; }
@@ -19,6 +18,13 @@ namespace Hyperion {
 
         void SetData(void* data, uint32_t size) override;
         void Bind(uint32_t slot) const override;
+
+        bool operator==(const Texture2D& other) const override
+        {
+	        const auto& texture2D = reinterpret_cast<OpenGLTexture2D&>(const_cast<Texture2D&>(other));
+	        return m_RendererID == texture2D.m_RendererID;
+        }
+
     private:
         std::string m_Path;
         

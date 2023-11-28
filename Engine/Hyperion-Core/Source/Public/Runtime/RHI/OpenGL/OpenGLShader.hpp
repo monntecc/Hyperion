@@ -25,9 +25,11 @@ namespace Hyperion {
 		void SetFloat4(const std::string& name, const glm::vec4& value) const override;
 		void SetFloat(const std::string& name, float value) const override;
 		void SetInt(const std::string& name, int value) const override;
+		void SetIntArray(const std::string& name, int* values, uint32_t count) const override;
 
 		void UploadUniformInt(const std::string& name, int value) const;
-		
+		void UploadUniformIntArray(const std::string& name, int* values, uint32_t count) const;
+
 		void UploadUniformFloat(const std::string& name, float value) const;
 		void UploadUniformFloat2(const std::string& name, const glm::vec2& values) const;
 		void UploadUniformFloat3(const std::string& name, const glm::vec3& values) const;
@@ -43,7 +45,11 @@ namespace Hyperion {
 		GLint GetUniformLocation(const std::string& name) const
 		{
 			if (!uniformMap.contains(name))
-				HR_CORE_CRITICAL("Uniform '" + name + "' not found in shader!");
+			{
+				HR_CORE_WARN("Uniform '" + name + "' not found in shader!");
+				return 0;
+			}
+
 			return uniformMap.at(name);
 		}
 
