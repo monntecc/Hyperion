@@ -70,7 +70,7 @@ namespace Hyperion
 
     void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
     {
-        const GLsizei count = indexCount ? static_cast<GLsizei>(vertexArray->GetIndexBuffer()->GetCount()) : static_cast<GLsizei>(indexCount);
+        const GLsizei count = indexCount ? static_cast<GLsizei>(indexCount) : static_cast<GLsizei>(vertexArray->GetIndexBuffer()->GetCount());
         glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
