@@ -113,6 +113,8 @@ namespace Hyperion {
     void Renderer2D::Shutdown()
     {
         ZoneScoped;
+
+        delete[] s_Data.QuadVertexBufferBase;
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera)
