@@ -23,10 +23,10 @@ namespace Hyperion {
     
     struct RendererData
     {
-        const uint32_t MaxQuads = 10000;
-        const uint32_t MaxVertices = MaxQuads * 4;
-        const uint32_t MaxIndices = MaxQuads * 6;
-        static const uint32_t MaxTextureSlots = 32; // TODO: Render capabilities
+        static constexpr uint32_t MaxQuads = 20000;
+        static constexpr uint32_t MaxVertices = MaxQuads * 4;
+        static constexpr uint32_t MaxIndices = MaxQuads * 6;
+        static constexpr uint32_t MaxTextureSlots = 32; // TODO: Render capabilities
         
         Ref<VertexArray> QuadVertexArray;
         Ref<VertexBuffer> QuadVertexBuffer;
@@ -42,6 +42,8 @@ namespace Hyperion {
         uint32_t TextureSlotIndex = 1; // 0  = white texture
 
         glm::vec4 QuadVertexPositions[4];
+
+        Renderer2D::Statistics Stats;
     };
 
     static RendererData s_Data;
@@ -51,7 +53,7 @@ namespace Hyperion {
         ZoneScoped;
 
         s_Data.QuadVertexArray = VertexArray::Create();
-        s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
+        s_Data.QuadVertexBuffer = VertexBuffer::Create(RendererData::MaxVertices * sizeof(QuadVertex));
 
         s_Data.QuadVertexBuffer->SetLayout({
             {ShaderDataType::Float3, "a_Position"},
@@ -61,12 +63,12 @@ namespace Hyperion {
             {ShaderDataType::Float, "a_TilingFactor"},
         });
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-        s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+        s_Data.QuadVertexBufferBase = new QuadVertex[RendererData::MaxVertices];
         
-        const auto quadIndices = new uint32_t[s_Data.MaxIndices];
+        const auto quadIndices = new uint32_t[RendererData::MaxIndices];
         uint32_t offset = 0;
         
-        for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
+        for (uint32_t i = 0; i < RendererData::MaxIndices; i += 6)
         {
             quadIndices[i + 0] = offset + 0;
             quadIndices[i + 1] = offset + 1;
@@ -79,7 +81,7 @@ namespace Hyperion {
             offset += 4;
         }
 
-        const Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
+        const Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, RendererData::MaxIndices);
         s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
         delete[] quadIndices;
 
@@ -88,7 +90,7 @@ namespace Hyperion {
         s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
         int32_t samplers[32];
-        for (int32_t i = 0; i < s_Data.MaxTextureSlots; i++)
+        for (int32_t i = 0; i < static_cast<int32_t>(RendererData::MaxTextureSlots); i++)
             samplers[i] = i;
 
         s_Data.TextureShader = Shader::Create("Assets/Shaders/Texture.hrsf");
@@ -141,6 +143,18 @@ namespace Hyperion {
             s_Data.TextureSlots[i]->Bind(i);
 
 	    RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+
+        s_Data.Stats.DrawCalls++;
+    }
+
+    void Renderer2D::FlushAndReset()
+    {
+        EndScene();
+
+        s_Data.QuadIndexCount = 0;
+        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+        s_Data.TextureSlotIndex = 1;
     }
 
 
@@ -152,6 +166,9 @@ namespace Hyperion {
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
         ZoneScoped;
+
+        if (s_Data.QuadIndexCount >= RendererData::MaxIndices)
+            FlushAndReset();
 
         constexpr float textureIndex = 0.0f; // white texture
         constexpr float tilingFactor = 0.0f; // tiling factor
@@ -188,6 +205,8 @@ namespace Hyperion {
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, Ref<Texture2D>& texture,
@@ -200,6 +219,9 @@ namespace Hyperion {
                               float tilingFactor, const glm::vec4& tintColor)
     {
         ZoneScoped;
+
+        if (s_Data.QuadIndexCount >= RendererData::MaxIndices)
+            FlushAndReset();
 
         constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -253,6 +275,8 @@ namespace Hyperion {
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
@@ -265,6 +289,9 @@ namespace Hyperion {
                                      const glm::vec4& color)
     {
         ZoneScoped;
+
+        if (s_Data.QuadIndexCount >= RendererData::MaxIndices)
+            FlushAndReset();
 
         constexpr float textureIndex = 0.0f; // white texture
         constexpr float tilingFactor = 0.0f; // tiling factor
@@ -302,6 +329,8 @@ namespace Hyperion {
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
@@ -314,6 +343,9 @@ namespace Hyperion {
                                      Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
         ZoneScoped;
+
+        if (s_Data.QuadIndexCount >= RendererData::MaxIndices)
+            FlushAndReset();
 
         constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -368,5 +400,17 @@ namespace Hyperion {
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
+    }
+
+    void Renderer2D::ResetStats()
+    {
+        memset(&s_Data.Stats, 0, sizeof(Statistics));
+    }
+
+    Renderer2D::Statistics Renderer2D::GetStats()
+    {
+        return s_Data.Stats;
     }
 }
