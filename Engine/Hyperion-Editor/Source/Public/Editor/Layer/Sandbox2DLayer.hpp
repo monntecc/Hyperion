@@ -2,6 +2,8 @@
 
 #include "Hyperion.hpp"
 
+#include "Editor/Content/ParticleSystem.hpp"
+
 class Sandbox2DLayer : public Hyperion::Layer
 {
 public:
@@ -19,4 +21,7 @@ private:
     Hyperion::Ref<Hyperion::Texture2D> m_CheckerboardTexture;
 
     glm::vec4 m_SquareColor = { 0.8f, 0.2f, 0.3f, 1.0f };
+
+    ParticleProps m_Particle;
+    ParticleSystem m_ParticleSystem;
 };
