@@ -128,7 +128,7 @@ ExampleLayer::ExampleLayer() : Layer("Example"), m_CameraController(1280.0f / 72
 
 	m_FlatColorShader = Hyperion::Shader::Create("FlatColor", flatColorVertexSrc, flatColorFragmentSrc);
 
-	const auto textureShader = m_ShaderLibrary.Load("Assets/Shaders/Texture.glsl");
+	const auto textureShader = m_ShaderLibrary.Load("Assets/Shaders/Texture.hrsf"); // hrsf = Hyperion Shader Format
 
 	m_Texture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
 	m_HyperionLogoTexture = Hyperion::Texture2D::Create("Assets/Textures/HyperionLogo.png");

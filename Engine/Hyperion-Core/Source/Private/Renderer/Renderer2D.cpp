@@ -89,7 +89,7 @@ namespace Hyperion {
         for (int32_t i = 0; i < s_Data.MaxTextureSlots; i++)
             samplers[i] = i;
 
-        s_Data.TextureShader = Shader::Create("Assets/Shaders/Texture.glsl");
+        s_Data.TextureShader = Shader::Create("Assets/Shaders/Texture.hrsf");
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetIntArray("u_Textures", samplers, RendererData::MaxTextureSlots);
 
