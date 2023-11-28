@@ -99,7 +99,7 @@ namespace Hyperion {
 
         s_Data.TextureShader = Shader::Create("Assets/Shaders/Texture.hrsf");
         s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetIntArray("u_Textures[0]", samplers, RendererData::MaxTextureSlots); // temp fix
+        s_Data.TextureShader->SetIntArray("u_Textures", samplers, RendererData::MaxTextureSlots); // temp fix
 
         // Set white texture to first slot
         s_Data.TextureSlots[0] = s_Data.WhiteTexture;
