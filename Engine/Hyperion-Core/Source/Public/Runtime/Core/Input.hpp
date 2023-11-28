@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Runtime/Core/Core.hpp"
+#include "Runtime/Core/Base.hpp"
 
 #include "Runtime/Core/KeyCodes.hpp"
 #include "Runtime/Core/MouseCodes.hpp"

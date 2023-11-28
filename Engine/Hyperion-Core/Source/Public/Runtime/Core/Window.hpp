@@ -2,7 +2,7 @@
 
 #include "hrpch.hpp"
 
-#include "Runtime/Core/Core.hpp"
+#include "Runtime/Core/Base.hpp"
 #include "Runtime/Events/Event.hpp"
 
 namespace Hyperion {

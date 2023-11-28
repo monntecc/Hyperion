@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Runtime/Core/Core.hpp"
+#include "Runtime/Core/Base.hpp"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>

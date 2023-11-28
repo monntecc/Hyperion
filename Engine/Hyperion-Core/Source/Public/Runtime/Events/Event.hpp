@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Runtime/Core/Core.hpp"
+#include "..\Core\Base.hpp"
 
 namespace Hyperion {
 

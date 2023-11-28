@@ -2,7 +2,7 @@
 
 // For use by Hyperion applications
 
-#include "Runtime/Core/Core.hpp"
+#include "Public\Runtime\Core\Base.hpp"
 
 #include "Runtime/Core/Application.hpp"
 #include "Runtime/Core/Layer.hpp"
