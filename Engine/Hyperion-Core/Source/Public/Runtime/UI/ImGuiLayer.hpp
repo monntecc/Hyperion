@@ -13,6 +13,7 @@ namespace Hyperion {
 		void OnAttach() override;
 		void OnDetach() override;
 		void OnImGuiRender() override;
+		void OnEvent(Event& event) override;
 
 		void Begin();
 		void End();
