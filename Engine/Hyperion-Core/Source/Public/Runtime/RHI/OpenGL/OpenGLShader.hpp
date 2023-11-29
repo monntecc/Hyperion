@@ -46,7 +46,7 @@ namespace Hyperion {
 		{
 			if (!uniformMap.contains(name))
 			{
-				HR_CORE_WARN("Uniform '" + name + "' not found in shader!");
+				// HR_CORE_WARN("Uniform '" + name + "' not found in shader!");
 				return 0;
 			}
 
