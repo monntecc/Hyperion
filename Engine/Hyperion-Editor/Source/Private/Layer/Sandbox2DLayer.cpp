@@ -39,8 +39,8 @@ void Sandbox2DLayer::OnUpdate(const Hyperion::Timestep timestep)
         Hyperion::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f, 0.0f }, { 0.8f, 0.8f }, glm::radians(-45.0f), {0.8f, 0.2f, 0.3f, 1.0f});
         Hyperion::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
         Hyperion::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
-        Hyperion::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckerboardTexture, 10.0f);
-        Hyperion::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckerboardTexture, 20.0f, { 0.3f, 0.5f, 0.4f, 1.0f });
+        Hyperion::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckerboardTexture, 10.0f, m_CheckerboardColor);
+        Hyperion::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckerboardTexture, 4.0f, m_RotatedCheckerboardColor);
         Hyperion::Renderer2D::EndScene();
 
         Hyperion::Renderer2D::BeginScene(m_CameraController.GetCamera());
@@ -69,6 +69,10 @@ void Sandbox2DLayer::OnUpdate(const Hyperion::Timestep timestep)
         for (int i = 0; i < 50; i++)
             m_ParticleSystem.Emit(m_Particle);
     }
+
+    //Hyperion::Renderer2D::BeginScene(m_CameraController.GetCamera());
+    //Hyperion::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.2f }, { 1.0f, 1.0f }, m_SpriteSheet);
+    //Hyperion::Renderer2D::EndScene();
 
     m_ParticleSystem.OnUpdate(timestep);
     m_ParticleSystem.OnRender(m_CameraController.GetCamera());
@@ -105,6 +109,8 @@ void Sandbox2DLayer::OnImGuiRender()
 
     ImGui::Text("Scene Configuration:");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+    ImGui::ColorEdit4("Rotated Checkerboard Color", glm::value_ptr(m_RotatedCheckerboardColor));
+    ImGui::ColorEdit4("Main Checkerboard Color", glm::value_ptr(m_CheckerboardColor));
     
     ImGui::End();
 }
@@ -124,6 +130,7 @@ void Sandbox2DLayer::OnAttach()
     m_Particle.Position = { 0.0f, 0.0f };
     
     m_CheckerboardTexture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");  
+    // m_SpriteSheet = Hyperion::Texture2D::Create("Assets/Game/Textures/RPGpack_sheet_2X.png");  
 }
 
 void Sandbox2DLayer::OnDetach()
