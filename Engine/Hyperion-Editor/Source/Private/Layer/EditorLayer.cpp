@@ -20,7 +20,8 @@ namespace Hyperion {
         FrameMarkNamed("EditorLayer::OnUpdate");
 
         // Update
-        m_CameraController.OnUpdate(timestep);
+			if (m_ViewportFocused)
+                m_CameraController.OnUpdate(timestep);
 
         // Render
         Renderer2D::ResetStats();
@@ -155,6 +156,11 @@ namespace Hyperion {
         // Viewport panel
         {
             ImGui::Begin("Viewport");
+            {
+                m_ViewportFocused = ImGui::IsWindowFocused(); // is window focused?
+                m_ViewportHovered = ImGui::IsWindowHovered(); // is mouse hovered over active window?
+                Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered); // if viewport not focused, block events
+            }
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
             if (m_ViewportSize != *reinterpret_cast<glm::vec2*>(&viewportPanelSize))
             {

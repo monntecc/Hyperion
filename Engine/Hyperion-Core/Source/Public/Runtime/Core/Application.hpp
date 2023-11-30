@@ -28,6 +28,7 @@ namespace Hyperion {
 		Window& GetWindow() const { return *m_Window; }
 
 		void Shutdown();
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 	private:
 		void Run();
 		

@@ -61,9 +61,12 @@ namespace Hyperion {
 
 	void ImGuiLayer::OnEvent(Event& event)
 	{
-		const ImGuiIO& io = ImGui::GetIO();
-		event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
-		event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+		if (m_BlockEvents)
+		{
+			const ImGuiIO& io = ImGui::GetIO();
+			event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+			event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+		}
 	}
 
 	void ImGuiLayer::Begin()

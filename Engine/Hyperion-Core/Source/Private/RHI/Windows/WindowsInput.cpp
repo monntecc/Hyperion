@@ -1,6 +1,6 @@
 #include "hrpch.hpp"
 
-#include "Runtime/RHI/Windows/WindowsInput.hpp"
+#include "Runtime/Core/Input.hpp"
 
 #include "Runtime/Core/Application.hpp"
 
@@ -8,7 +8,7 @@
 
 namespace Hyperion {
 
-	bool WindowsInput::IsKeyPressedImpl(KeyCode keycode)
+	bool Input::IsKeyPressed(KeyCode keycode)
 	{
 		const auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		const auto state = glfwGetKey(window, static_cast<int32_t>(keycode));
@@ -16,7 +16,7 @@ namespace Hyperion {
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::IsMouseButtonPressedImpl(MouseCode button)
+	bool Input::IsMouseButtonPressed(MouseCode button)
 	{
 		const auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		const auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
@@ -24,7 +24,7 @@ namespace Hyperion {
 		return state == GLFW_PRESS;
 	}
 
-	std::pair<float, float> WindowsInput::GetMousePositionImpl()
+	std::pair<float, float> Input::GetMousePosition()
 	{
 		const auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
@@ -33,15 +33,15 @@ namespace Hyperion {
 		return { static_cast<float>(xpos), static_cast<float>(ypos) };
 	}
 
-	float WindowsInput::GetMouseXImpl()
+	float Input::GetMouseX()
 	{
-		auto [x, y] = GetMousePositionImpl();
+		auto [x, y] = GetMousePosition();
 		return x;
 	}
 
-	float WindowsInput::GetMouseYImpl()
+	float Input::GetMouseY()
 	{
-		auto [x, y] = GetMousePositionImpl();
+		auto [x, y] = GetMousePosition();
 		return y;
 	}
 
