@@ -71,6 +71,15 @@ namespace Hyperion
         dispatcher.Dispatch<WindowResizeEvent>(HR_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
     }
 
+    void OrthographicCameraController::OnResize(float width, float height)
+    {
+        ZoneScoped;
+
+        m_AspectRatio = width / height;
+        m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    }
+
     bool OrthographicCameraController::OnMouseScrolled(const MouseScrolledEvent& event)
     {
         ZoneScoped;
@@ -86,9 +95,7 @@ namespace Hyperion
     {
         ZoneScoped;
         
-        m_AspectRatio = static_cast<float>(event.GetWidth()) / static_cast<float>(event.GetHeight());
-        m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
-        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+        OnResize(static_cast<float>(event.GetWidth()), static_cast<float>(event.GetHeight()));
         return false;
     }
 }

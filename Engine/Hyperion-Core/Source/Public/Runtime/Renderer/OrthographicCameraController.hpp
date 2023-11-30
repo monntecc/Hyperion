@@ -26,6 +26,8 @@ namespace Hyperion {
 
         void OnUpdate(Timestep timestep);
         void OnEvent(Event& event);
+
+        void OnResize(float width, float height);
         
         OrthographicCamera& GetCamera() { return m_Camera; }
         const OrthographicCamera& GetCamera() const { return m_Camera; }
