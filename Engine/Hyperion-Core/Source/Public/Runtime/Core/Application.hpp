@@ -26,6 +26,8 @@ namespace Hyperion {
 
 		static Application& Get() { return *s_Instance; }
 		Window& GetWindow() const { return *m_Window; }
+
+		void Shutdown();
 	private:
 		void Run();
 		

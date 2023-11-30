@@ -67,6 +67,11 @@ namespace Hyperion {
 		}
 	}
 
+	void Application::Shutdown()
+	{
+		m_Running = false;
+	}
+
 	void Application::Run()
 	{
 		ZoneScoped;
