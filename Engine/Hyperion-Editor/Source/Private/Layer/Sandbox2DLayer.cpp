@@ -23,6 +23,9 @@ void Sandbox2DLayer::OnUpdate(const Hyperion::Timestep timestep)
     Hyperion::Renderer2D::ResetStats();
     {
         ZoneScoped;
+
+        m_FrameBuffer->Bind();
+
         Hyperion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         Hyperion::RenderCommand::Clear();   
     }
@@ -53,6 +56,7 @@ void Sandbox2DLayer::OnUpdate(const Hyperion::Timestep timestep)
             }
         }
         Hyperion::Renderer2D::EndScene();
+        m_FrameBuffer->Unbind();
     }
 
    /* if (Hyperion::Input::IsMouseButtonPressed(HR_MOUSE_BUTTON_LEFT))
@@ -74,8 +78,8 @@ void Sandbox2DLayer::OnUpdate(const Hyperion::Timestep timestep)
     //Hyperion::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.2f }, { 1.0f, 1.0f }, m_SpriteSheet);
     //Hyperion::Renderer2D::EndScene();
 
-    m_ParticleSystem.OnUpdate(timestep);
-    m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+    //m_ParticleSystem.OnUpdate(timestep);
+    //m_ParticleSystem.OnRender(m_CameraController.GetCamera());
 }
 
 void Sandbox2DLayer::OnEvent(Hyperion::Event& event)
@@ -88,68 +92,98 @@ void Sandbox2DLayer::OnEvent(Hyperion::Event& event)
 void Sandbox2DLayer::OnImGuiRender()
 {
     ZoneScoped;
-     
-    static bool dockspaceOpen = true;
-    static bool opt_fullscreen = true;
-    static bool opt_padding = false;
-    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-    // because it would be confusing to have two docking targets within each others.
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-    if (opt_fullscreen)
+    // Note: Switch this to true to enable dockspace
+    static bool dockingEnabled = true;
+    if (dockingEnabled)
     {
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
-        ImGui::SetNextWindowViewport(viewport->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-    }
-    else
-    {
-        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-    }
+        static bool dockspaceOpen = true;
+        static bool opt_fullscreen = true;
+        static bool opt_padding = false;
+        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-    // and handle the pass-thru hole, so we ask Begin() to not render a background.
-    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-        window_flags |= ImGuiWindowFlags_NoBackground;
-
-    // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-    // all active windows docked into it will lose their parent and become undocked.
-    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-    // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-    if (!opt_padding)
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
-    if (!opt_padding)
-        ImGui::PopStyleVar();
-
-    if (opt_fullscreen)
-        ImGui::PopStyleVar(2);
-
-    // Submit the DockSpace
-    const ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-    {
-	    const ImGuiID dockspaceId = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspace_flags);
-    }
-
-    if (ImGui::BeginMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
+        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+        // because it would be confusing to have two docking targets within each others.
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        if (opt_fullscreen)
         {
-            if (ImGui::MenuItem("Exit")) { Hyperion::Application::Get().Shutdown(); }
-            ImGui::EndMenu();
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         }
-        ImGui::EndMenuBar();
-    }
+        else
+        {
+            dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+        }
 
+        // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+        // and handle the pass-thru hole, so we ask Begin() to not render a background.
+        if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+            window_flags |= ImGuiWindowFlags_NoBackground;
+
+        // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+        // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+        // all active windows docked into it will lose their parent and become undocked.
+        // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+        // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+        if (!opt_padding)
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+        if (!opt_padding)
+            ImGui::PopStyleVar();
+
+        if (opt_fullscreen)
+            ImGui::PopStyleVar(2);
+
+        // Submit the DockSpace
+        const ImGuiIO& io = ImGui::GetIO();
+        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+        {
+            const ImGuiID dockspaceId = ImGui::GetID("MyDockSpace");
+            ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspace_flags);
+        }
+
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("Exit")) { Hyperion::Application::Get().Shutdown(); }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+
+        {
+            ImGui::Begin("Settings");
+
+            const auto stats = Hyperion::Renderer2D::GetStats();
+            ImGui::Text("Renderer2D Stats:");
+            ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+            ImGui::Text("Quads: %d", stats.QuadCount);
+            ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+            ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+            const auto textureID = reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentRendererID());  // NOLINT(performance-no-int-to-ptr)
+            ImGui::Image(textureID, ImVec2{ 1280.0f, 720.0f });
+
+            /*ImGui::Separator();
+
+            ImGui::Text("Particle Stats:");
+            ImGui::ColorEdit4("Birth Color", glm::value_ptr(m_Particle.ColorBegin));
+            ImGui::ColorEdit4("Death Color", glm::value_ptr(m_Particle.ColorEnd));
+            ImGui::DragFloat("Life Time", &m_Particle.LifeTime, 0.1f, 0.0f, 1000.0f);*/
+
+            ImGui::End();
+        }
+
+        ImGui::End();
+    }
+	else
     {
         ImGui::Begin("Settings");
 
@@ -160,34 +194,22 @@ void Sandbox2DLayer::OnImGuiRender()
         ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-        ImGui::Separator();
+        /*ImGui::Separator();
 
         ImGui::Text("Particle Stats:");
         ImGui::ColorEdit4("Birth Color", glm::value_ptr(m_Particle.ColorBegin));
         ImGui::ColorEdit4("Death Color", glm::value_ptr(m_Particle.ColorEnd));
-        ImGui::DragFloat("Life Time", &m_Particle.LifeTime, 0.1f, 0.0f, 1000.0f);
-
-        ImGui::Separator();
-
-        ImGui::Text("Scene Configuration:");
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-        ImGui::ColorEdit4("Rotated Checkerboard Color", glm::value_ptr(m_RotatedCheckerboardColor));
-        ImGui::ColorEdit4("Main Checkerboard Color", glm::value_ptr(m_CheckerboardColor));
-
-        const auto textureID = reinterpret_cast<void*>(m_CheckerboardTexture->GetRendererID());  // NOLINT(performance-no-int-to-ptr)
-        ImGui::Image(textureID, ImVec2{256.0f, 256.0f });
+        ImGui::DragFloat("Life Time", &m_Particle.LifeTime, 0.1f, 0.0f, 1000.0f);*/
 
         ImGui::End();
     }
-
-    ImGui::End();
 }
 
 void Sandbox2DLayer::OnAttach()
 {
     ZoneScoped;
 
-    m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
+   /* m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
     m_Particle.ColorEnd = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
     m_Particle.SizeBegin = 0.5f;
     m_Particle.SizeVariation = 0.3f;
@@ -195,10 +217,15 @@ void Sandbox2DLayer::OnAttach()
     m_Particle.LifeTime = 5.0f;
     m_Particle.Velocity = { 0.0f, 0.0f };
     m_Particle.VelocityVariation = { 3.0f, 1.0f };
-    m_Particle.Position = { 0.0f, 0.0f };
+    m_Particle.Position = { 0.0f, 0.0f };*/
     
     m_CheckerboardTexture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");  
-    // m_SpriteSheet = Hyperion::Texture2D::Create("Assets/Game/Textures/RPGpack_sheet_2X.png");  
+    // m_SpriteSheet = Hyperion::Texture2D::Create("Assets/Game/Textures/RPGpack_sheet_2X.png");
+
+    Hyperion::FrameBufferSpecification specification = {};
+    specification.Width = 1280;
+    specification.Height = 720;
+    m_FrameBuffer = Hyperion::FrameBuffer::Create(specification);
 }
 
 void Sandbox2DLayer::OnDetach()

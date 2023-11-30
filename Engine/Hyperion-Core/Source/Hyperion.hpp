@@ -19,6 +19,7 @@
 #include "Runtime/Renderer/RenderCommand.hpp"
 
 #include "Runtime/Renderer/Buffer.hpp"
+#include "Runtime/Renderer/FrameBuffer.hpp"
 #include "Runtime/Renderer/Shader.hpp"
 #include "Runtime/Renderer/VertexArray.hpp"
 
