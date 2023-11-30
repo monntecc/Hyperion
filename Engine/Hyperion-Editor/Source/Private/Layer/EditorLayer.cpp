@@ -19,12 +19,25 @@ namespace Hyperion {
     {
         FrameMarkNamed("EditorLayer::OnUpdate");
 
+        // Resize
+        if (const FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
+            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+            (spec.Width != static_cast<uint32_t>(m_ViewportSize.x) || 
+                spec.Height != static_cast<uint32_t>(m_ViewportSize.y)))
+        {
+            m_FrameBuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), 
+                static_cast<uint32_t>(m_ViewportSize.y));
+            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+        }
+
         // Update
 			if (m_ViewportFocused)
                 m_CameraController.OnUpdate(timestep);
 
         // Render
         Renderer2D::ResetStats();
+
+        // Bind framebuffer, set color
         {
             ZoneScoped;
 
@@ -162,17 +175,10 @@ namespace Hyperion {
                 Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered); // if viewport not focused, block events
             }
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-            if (m_ViewportSize != *reinterpret_cast<glm::vec2*>(&viewportPanelSize))
-            {
-                m_FrameBuffer->Resize(static_cast<uint32_t>(viewportPanelSize.x), 
-                    static_cast<uint32_t>(viewportPanelSize.y));
-                m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-                m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-            }
+            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
             const auto textureID = reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentRendererID());  // NOLINT(performance-no-int-to-ptr)
-            ImGui::Image(textureID, ImVec2{ viewportPanelSize.x, viewportPanelSize.y }, ImVec2{ 0.0f, 1.0f }, ImVec2{ 1.0f, 0.0f });
+            ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0.0f, 1.0f }, ImVec2{ 1.0f, 0.0f });
             ImGui::End();
         }
 
