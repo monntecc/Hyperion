@@ -1,10 +1,10 @@
-project "Hyperion-Editor"
+project "Hyperion-Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "off"
 
-	files { "Source/HyperionEditor.cpp", "Source/Private/**.cpp", "Source/Public/**.hpp" }
+	files { "Source/HyperionSandbox.cpp", "Source/Private/**.cpp", "Source/Public/**.hpp" }
 
 	includedirs
 	{

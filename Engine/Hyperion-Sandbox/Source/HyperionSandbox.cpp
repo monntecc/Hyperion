@@ -1,24 +1,22 @@
-// #include "Editor/Layer/ExampleLayer.hpp"
-#include "Editor/Layer/Sandbox2DLayer.hpp"
+#include "Sandbox/Layer/Sandbox2DLayer.hpp"
 
 #include <Tracy.hpp>
 
-class Editor final : public Hyperion::Application
+class HyperionSandbox final : public Hyperion::Application
 {
 public:
-	Editor()
+	HyperionSandbox()
 	{
-		// PushLayer(new ExampleLayer());
 		PushLayer(new Sandbox2DLayer());
 	}
 
-	~Editor() override = default;
+	~HyperionSandbox() override = default;
 
 };
 
 Hyperion::Application* Hyperion::CreateApplication()
 {
-	return new Editor();
+	return new HyperionSandbox();
 }
 
 int main(int argc, char** argv)

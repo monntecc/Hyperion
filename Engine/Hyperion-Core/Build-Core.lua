@@ -57,8 +57,13 @@ project "Hyperion-Core"
 
 	postbuildcommands
 	{
+		-- Copy dll to editor project
 		("IF NOT EXIST %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor mkdir %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor"),
-		("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor/\"")
+		("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor/\""),
+
+		-- Copy dll to sandbox project
+		("IF NOT EXIST %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox mkdir %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox"),
+		("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox/\"")
 	}
 
 	targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")

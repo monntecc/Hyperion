@@ -16,7 +16,7 @@ namespace Hyperion {
 	class HYPERION_API Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "Hyperion Application");
 		virtual ~Application();
 		
 		void OnEvent(Event& e);

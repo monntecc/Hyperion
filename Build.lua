@@ -24,3 +24,4 @@ group "Dependecies"
 group ""
 
 include "Engine/Hyperion-Editor/Build-Editor.lua"
+include "Engine/Hyperion-Sandbox/Build-Sandbox.lua"
