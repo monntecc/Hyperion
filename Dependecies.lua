@@ -8,3 +8,4 @@ IncludeDir["Glad"] = "%{wks.location}/Engine/Hyperion-Core/External/Glad/include
 IncludeDir["ImGui"] = "%{wks.location}/Engine/Hyperion-Core/External/ImGui"
 IncludeDir["glm"] = "%{wks.location}/Engine/Hyperion-Core/External/glm"
 IncludeDir["Tracy"] = "%{wks.location}/Engine/Hyperion-Core/External/Tracy"
+IncludeDir["entt"] = "%{wks.location}/Engine/Hyperion-Core/External/entt/include"

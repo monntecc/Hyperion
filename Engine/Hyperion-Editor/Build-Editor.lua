@@ -18,6 +18,7 @@ project "Hyperion-Editor"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Tracy}",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.glm}"
 	}
 

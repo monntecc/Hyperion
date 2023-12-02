@@ -44,6 +44,7 @@ project "Hyperion-Core"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.Tracy}",
+		"%{IncludeDir.entt}"
 	}
 
 	links

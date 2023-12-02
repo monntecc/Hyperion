@@ -15,6 +15,24 @@ namespace Hyperion {
     {
     }
 
+    void EditorLayer::OnAttach()
+    {
+        FrameBufferSpecification specification = {};
+        specification.Width = 1280;
+        specification.Height = 720;
+        m_FrameBuffer = FrameBuffer::Create(specification);
+
+        m_ActiveScene = CreateRef<Scene>();
+
+        m_SquareEntity = m_ActiveScene->CreateEntity();
+        m_ActiveScene->Reg().emplace<TransformComponent>(m_SquareEntity);
+        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SquareEntity, m_SquareColor);
+    }
+
+    void EditorLayer::OnDetach()
+    {
+    }
+
     void EditorLayer::OnUpdate(const Timestep timestep)
     {
         FrameMarkNamed("EditorLayer::OnUpdate");
@@ -31,63 +49,35 @@ namespace Hyperion {
         }
 
         // Update
-			if (m_ViewportFocused)
-                m_CameraController.OnUpdate(timestep);
+		if (m_ViewportFocused)
+            m_CameraController.OnUpdate(timestep);
 
         // Render
         Renderer2D::ResetStats();
 
         // Bind framebuffer, set color
-        {
-            ZoneScoped;
-
-            m_FrameBuffer->Bind();
-
-            RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-            RenderCommand::Clear();
-        }
-
+        m_FrameBuffer->Bind();
+        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+        RenderCommand::Clear();
 
         // Draw quads
-        {
-            static float rotation = glm::radians(0.0f);
-            rotation += timestep * glm::radians(50.0f);
+        Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-            ZoneScoped;
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
-            // Draw a quads
-            Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f, 0.0f }, { 0.8f, 0.8f }, glm::radians(-45.0f), { 0.8f, 0.2f, 0.3f, 1.0f });
-            Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
-            Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
-            Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckerboardTexture, 10.0f, m_CheckerboardColor);
-            Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckerboardTexture, 4.0f, m_RotatedCheckerboardColor);
-            Renderer2D::EndScene();
+        // Update scene
+    	m_ActiveScene->OnUpdate(timestep);
 
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
-            for (float y = -5.0f; y < 5.0f; y += 0.5f)  // NOLINT(cert-flp30-c)
-            {
-                for (float x = -5.0f; x < 5.0f; x += 0.5f) // NOLINT(cert-flp30-c)
-                {
-                    glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-                    Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-                }
-            }
-            Renderer2D::EndScene();
-            m_FrameBuffer->Unbind();
-        }
+    	Renderer2D::EndScene();
+
+        m_FrameBuffer->Unbind();
     }
 
     void EditorLayer::OnEvent(Event& event)
     {
-        ZoneScoped;
-
         m_CameraController.OnEvent(event);
     }
 
     void EditorLayer::OnImGuiRender()
     {
-        ZoneScoped;
-
         static bool dockspaceOpen = true;
         static bool opt_fullscreen = true;
         static bool opt_padding = false;
@@ -161,6 +151,10 @@ namespace Hyperion {
             ImGui::Text("Quads: %d", stats.QuadCount);
             ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
             ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+            auto& squareColor = m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color;
+            ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+
             ImGui::End();
         }
 
@@ -185,22 +179,6 @@ namespace Hyperion {
     	ImGui::PopStyleVar();
 
         ImGui::End();
-    }
-
-    void EditorLayer::OnAttach()
-    {
-        ZoneScoped;
-        m_CheckerboardTexture = Texture2D::Create("Assets/Textures/Checkerboard.png");
-
-		FrameBufferSpecification specification = {};
-        specification.Width = 1280;
-        specification.Height = 720;
-        m_FrameBuffer = FrameBuffer::Create(specification);
-    }
-
-    void EditorLayer::OnDetach()
-    {
-        ZoneScoped;
     }
 
 }

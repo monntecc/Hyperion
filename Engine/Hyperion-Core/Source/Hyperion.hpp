@@ -13,6 +13,11 @@
 
 #include "Runtime/Core/Timestep.hpp"
 
+// ------------------- Scene -------------------
+#include "Runtime/Scene/Scene.hpp"
+#include "Runtime/Scene/Components.hpp"
+// ------------------------------------------------
+
 // ------------------- Renderer -------------------
 #include "Runtime/Renderer/Renderer.hpp"
 #include "Runtime/Renderer/Renderer2D.hpp"

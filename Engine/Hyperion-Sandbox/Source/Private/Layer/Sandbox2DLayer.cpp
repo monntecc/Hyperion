@@ -11,6 +11,18 @@ Sandbox2DLayer::Sandbox2DLayer() :
 {
 }
 
+void Sandbox2DLayer::OnAttach()
+{
+    ZoneScoped;
+
+    m_CheckerboardTexture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");
+}
+
+void Sandbox2DLayer::OnDetach()
+{
+    ZoneScoped;
+}
+
 void Sandbox2DLayer::OnUpdate(const Hyperion::Timestep timestep)
 {
     FrameMarkNamed("Sandbox2DLayer::OnUpdate");
@@ -77,16 +89,4 @@ void Sandbox2DLayer::OnImGuiRender()
     ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
     ImGui::End();
-}
-
-void Sandbox2DLayer::OnAttach()
-{
-    ZoneScoped;
-    
-    m_CheckerboardTexture = Hyperion::Texture2D::Create("Assets/Textures/Checkerboard.png");  
-}
-
-void Sandbox2DLayer::OnDetach()
-{
-    ZoneScoped;
 }

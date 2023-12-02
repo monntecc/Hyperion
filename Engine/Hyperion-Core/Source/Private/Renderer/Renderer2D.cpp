@@ -174,20 +174,40 @@ namespace Hyperion {
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
+        const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        DrawQuad(transform, color);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
+                              float tilingFactor, const glm::vec4& tintColor)
+    {
+        DrawQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
+                              float tilingFactor, const glm::vec4& tintColor)
+    {
+        const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        DrawQuad(transform, texture, tilingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+    {
         ZoneScoped;
 
         if (s_Data.QuadIndexCount >= RendererData::MaxIndices)
             FlushAndReset();
 
-        const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-        for (size_t i = 0; i < RendererData::QuadVertexCount; i++)
+    	for (size_t i = 0; i < RendererData::QuadVertexCount; i++)
         {
-	        constexpr float textureIndex = 0.0f;
+            constexpr float textureIndex = 0.0f;
             constexpr float tilingFactor = 0.0f; // tiling factor
 
-	        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
             s_Data.QuadVertexBufferPtr->Color = color;
             s_Data.QuadVertexBufferPtr->TexCoord = RendererData::QuadTextureCoords[i];
             s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
@@ -200,14 +220,8 @@ namespace Hyperion {
         s_Data.Stats.QuadCount++;
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, Ref<Texture2D>& texture,
-                              float tilingFactor, const glm::vec4& tintColor)
-    {
-        DrawQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, tintColor);
-    }
-
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, Ref<Texture2D>& texture,
-                              float tilingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, 
+        float tilingFactor, const glm::vec4& tintColor)
     {
         ZoneScoped;
 
@@ -218,11 +232,11 @@ namespace Hyperion {
 
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
         {
-	        if (*s_Data.TextureSlots[i] == *texture.get())
-	        {
+            if (*s_Data.TextureSlots[i] == *texture.get())
+            {
                 textureIndex = static_cast<float>(i);
                 break;
-	        }
+            }
         }
 
         if (textureIndex == 0.0f)
@@ -234,9 +248,6 @@ namespace Hyperion {
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
             s_Data.TextureSlotIndex++;
         }
-
-        const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         for (size_t i = 0; i < RendererData::QuadVertexCount; i++)
         {
@@ -290,20 +301,18 @@ namespace Hyperion {
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
-                                     Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
+                                     const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
         DrawRotatedQuad({position.x, position.y, 1.0f}, size, rotation, texture, tilingFactor, tintColor);
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation,
-                                     Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
+                                     const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
         ZoneScoped;
 
         if (s_Data.QuadIndexCount >= RendererData::MaxIndices)
             FlushAndReset();
-
-        constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
         float textureIndex = 0.0f;
 
