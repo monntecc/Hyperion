@@ -15,6 +15,7 @@
 
 // ------------------- Scene -------------------
 #include "Runtime/Scene/Scene.hpp"
+#include "Runtime/Scene/Entity.hpp"
 #include "Runtime/Scene/Components.hpp"
 // ------------------------------------------------
 

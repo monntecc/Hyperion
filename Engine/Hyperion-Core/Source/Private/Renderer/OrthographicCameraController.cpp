@@ -74,6 +74,12 @@ namespace Hyperion
     {
         ZoneScoped;
 
+        if (width == 0 || height == 0)
+        {
+            HR_CORE_WARN("Attempted to rezize camera to {0}, {1}", width, height);
+            return;
+        }
+
         m_AspectRatio = width / height;
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
     }

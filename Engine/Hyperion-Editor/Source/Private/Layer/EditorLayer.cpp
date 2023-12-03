@@ -24,9 +24,9 @@ namespace Hyperion {
 
         m_ActiveScene = CreateRef<Scene>();
 
-        m_SquareEntity = m_ActiveScene->CreateEntity();
-        m_ActiveScene->Reg().emplace<TransformComponent>(m_SquareEntity);
-        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SquareEntity, m_SquareColor);
+        auto entity = m_ActiveScene->CreateEntity("Square");
+        entity.AddComponent<SpriteRendererComponent>(m_SquareColor);
+        m_SquareEntity = entity;
     }
 
     void EditorLayer::OnDetach()
@@ -38,12 +38,8 @@ namespace Hyperion {
         FrameMarkNamed("EditorLayer::OnUpdate");
 
         // Resize
-        if (const FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
-            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
-            (spec.Width != static_cast<uint32_t>(m_ViewportSize.x) || 
-                spec.Height != static_cast<uint32_t>(m_ViewportSize.y)))
         {
-            m_FrameBuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), 
+            m_FrameBuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x),
                 static_cast<uint32_t>(m_ViewportSize.y));
             m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
         }
@@ -152,8 +148,16 @@ namespace Hyperion {
             ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
             ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-            auto& squareColor = m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color;
-            ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+            if (m_SquareEntity)
+            {
+                ImGui::Separator();
+                const auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+                ImGui::Text("%s", tag.c_str());
+
+                auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+                ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+                ImGui::Separator();
+            }
 
             ImGui::End();
         }

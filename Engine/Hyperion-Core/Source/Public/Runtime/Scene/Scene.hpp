@@ -6,21 +6,22 @@
 
 namespace Hyperion {
 
+	class Entity;
+
 	class HYPERION_API Scene
 	{
 	public:
 		Scene();
 		~Scene();
 
-		entt::entity CreateEntity();
-
-		// TEMP
-		entt::registry& Reg() { return m_Registry; }
+		Entity CreateEntity(const std::string& name = std::string());
 
 		void OnUpdate(Timestep timestep);
 
 	private:
 		entt::registry m_Registry;
+
+		friend class Entity;
 	};
 
 }
