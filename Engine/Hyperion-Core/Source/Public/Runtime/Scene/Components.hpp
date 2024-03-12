@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "Runtime/Renderer/Camera.hpp"
+#include "Runtime/Scene/SceneCamera.hpp"
 
 namespace Hyperion {
 
@@ -38,13 +39,13 @@ namespace Hyperion {
 
 	struct CameraComponent
 	{
-		Hyperion::Camera Camera;
+		SceneCamera Camera;
 		bool Primary = true; // TODO: think about moving to Scene
+
+		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projection)
-			: Camera(projection) {}
 	};
 
 }
