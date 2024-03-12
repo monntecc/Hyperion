@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include "Runtime/Renderer/Camera.hpp"
+
 namespace Hyperion {
 
 	struct TagComponent
@@ -32,6 +34,17 @@ namespace Hyperion {
 		SpriteRendererComponent() = default;
 		explicit SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+	};
+
+	struct CameraComponent
+	{
+		Hyperion::Camera Camera;
+		bool Primary = true; // TODO: think about moving to Scene
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const glm::mat4& projection)
+			: Camera(projection) {}
 	};
 
 }

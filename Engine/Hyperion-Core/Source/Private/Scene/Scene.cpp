@@ -27,12 +27,40 @@ namespace Hyperion {
 
 	void Scene::OnUpdate(Timestep ts)
 	{
-		const auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		for (const auto entity : group)
+		// Render 2D
+		Camera* mainCamera = nullptr;
+		glm::mat4* cameraTransform = nullptr;
 		{
-			auto& transform = group.get<TransformComponent>(entity);
-			auto& sprite = group.get<SpriteRendererComponent>(entity);
-			Renderer2D::DrawQuad(static_cast<glm::mat4&>(transform), sprite.Color);
+			const auto group = m_Registry.view<TransformComponent, CameraComponent>();
+			for (const auto entity : group)
+			{
+				auto& transform = group.get<TransformComponent>(entity);
+				auto& camera = group.get<CameraComponent>(entity);
+
+				if (camera.Primary)
+				{
+					mainCamera = &camera.Camera;
+					cameraTransform = &transform.Transform;
+					break;
+				}
+			}
 		}
+
+		if (mainCamera)
+		{
+			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+
+			const auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (const auto entity : group)
+			{
+				auto& transform = group.get<TransformComponent>(entity);
+				auto& sprite = group.get<SpriteRendererComponent>(entity);
+
+				Renderer2D::DrawQuad(transform.Transform, sprite.Color);
+			}
+
+			Renderer2D::EndScene();
+		}
+
 	}
 }
