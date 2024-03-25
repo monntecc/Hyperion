@@ -26,11 +26,10 @@ namespace Hyperion {
 
         auto entity = m_ActiveScene->CreateEntity("Green Square");
         entity.AddComponent<SpriteRendererComponent>(m_SquareColor);
+        m_SquareEntity = entity;
 
         auto redSquare = m_ActiveScene->CreateEntity("Red Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
-
-        m_SquareEntity = entity;
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
         m_CameraEntity.AddComponent<CameraComponent>();
