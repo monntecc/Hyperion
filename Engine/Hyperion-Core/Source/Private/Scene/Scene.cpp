@@ -31,17 +31,16 @@ namespace Hyperion {
 		{
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 				{
+					// TODO: Move to Scene::OnScenePlay
 					if (!nsc.Instance)
 					{
-						nsc.InstantiateFunction();
+						nsc.Instance = nsc.InstantiateScript();
 						nsc.Instance->m_Entity = Entity{ entity, this };
 
-						if (nsc.OnCreateFunction)
-							nsc.OnCreateFunction(nsc.Instance);
+						nsc.Instance->OnCreate();
 					}
 
-					if (nsc.OnUpdateFunction)
-						nsc.OnUpdateFunction(nsc.Instance, ts);
+					nsc.Instance->OnUpdate(ts);
 				});
 		}
 
@@ -52,8 +51,8 @@ namespace Hyperion {
 			const auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (const auto entity : view)
 			{
-				auto& transform = view.get<TransformComponent>(entity);
-				auto& camera = view.get<CameraComponent>(entity);
+				auto transform = view.get<TransformComponent>(entity);
+				auto camera = view.get<CameraComponent>(entity);
 
 				if (camera.Primary)
 				{
@@ -71,8 +70,8 @@ namespace Hyperion {
 			const auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (const auto entity : group)
 			{
-				auto& transform = group.get<TransformComponent>(entity);
-				auto& sprite = group.get<SpriteRendererComponent>(entity);
+				auto transform = group.get<TransformComponent>(entity);
+				auto sprite = group.get<SpriteRendererComponent>(entity);
 
 				Renderer2D::DrawQuad(transform.Transform, sprite.Color);
 			}

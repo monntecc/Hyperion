@@ -40,6 +40,8 @@ namespace Hyperion {
         public:
             void OnCreate()
             {
+                auto& transform = GetComponent<TransformComponent>().Transform;
+                transform[3][0] = rand() % 10 - 5.0f;
             }
 
             void OnDestroy()
@@ -49,6 +51,7 @@ namespace Hyperion {
             void OnUpdate(Timestep ts)
             {
                 auto& transform = GetComponent<TransformComponent>().Transform;
+
                 float speed = 5.0f;
 
                 if (Input::IsKeyPressed(Key::A))
@@ -63,6 +66,8 @@ namespace Hyperion {
         };
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach()
