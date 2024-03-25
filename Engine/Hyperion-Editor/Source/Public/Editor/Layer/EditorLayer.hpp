@@ -2,6 +2,8 @@
 
 #include "Hyperion.hpp"
 
+#include "Editor/Panels/SceneHierarchyPanel.hpp"
+
 namespace Hyperion {
 
     class EditorLayer : public Layer
@@ -33,6 +35,9 @@ namespace Hyperion {
         glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 
         glm::vec4 m_SquareColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+
+        // Panels
+        SceneHierarchyPanel m_SceneHierarchyPanel;
     };
 
 }
