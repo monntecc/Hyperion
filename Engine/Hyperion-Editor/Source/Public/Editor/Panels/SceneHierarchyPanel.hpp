@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Runtime/Core/Base.hpp"
-#include "Runtime/Core/Log.hpp"
 
 #include "Runtime/Scene/Scene.hpp"
 #include "Runtime/Scene/Entity.hpp"

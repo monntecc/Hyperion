@@ -8,6 +8,7 @@
 #include "Runtime/Core/Layer.hpp"
 #include "Runtime/Core/Log.hpp"
 #include "Runtime/Core/Input.hpp"
+#include "Runtime/Core/Assert.hpp"
 
 #include "Runtime/UI/ImGuiLayer.hpp"
 
