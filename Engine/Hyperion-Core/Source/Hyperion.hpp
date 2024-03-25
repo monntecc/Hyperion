@@ -17,6 +17,7 @@
 #include "Runtime/Scene/Scene.hpp"
 #include "Runtime/Scene/Entity.hpp"
 #include "Runtime/Scene/Components.hpp"
+#include "Runtime/Scene/ScriptableEntity.hpp"
 // ------------------------------------------------
 
 // ------------------- Renderer -------------------
