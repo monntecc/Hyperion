@@ -113,7 +113,7 @@ namespace Hyperion {
 							ShaderDataTypeToOpenGLBaseType(element.Type),
 							element.Normalized ? GL_TRUE : GL_FALSE,
 							layout.GetStride(),
-							reinterpret_cast<const void*>(sizeof(float) * count * i));
+							reinterpret_cast<const void*>(element.Offset + sizeof(float) * count * i));
 						glVertexAttribDivisor(index, 1);
 						index++;
 					}

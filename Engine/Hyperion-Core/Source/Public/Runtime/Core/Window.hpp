@@ -1,9 +1,9 @@
 #pragma once
 
-#include "hrpch.hpp"
-
 #include "Runtime/Core/Base.hpp"
 #include "Runtime/Events/Event.hpp"
+
+#include <sstream>
 
 namespace Hyperion {
 

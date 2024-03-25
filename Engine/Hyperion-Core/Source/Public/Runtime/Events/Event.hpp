@@ -2,6 +2,8 @@
 
 #include "Runtime/Core/Base.hpp"
 
+#include <functional>
+
 namespace Hyperion {
 
 	// Events in Hyperion are currently blocking, meaning when an event occurs it

@@ -51,13 +51,13 @@ namespace Hyperion {
                 auto& transform = GetComponent<TransformComponent>().Transform;
                 float speed = 5.0f;
 
-                if (Input::IsKeyPressed(KeyCode::A))
+                if (Input::IsKeyPressed(Key::A))
                     transform[3][0] -= speed * ts;
-                if (Input::IsKeyPressed(KeyCode::D))
+                if (Input::IsKeyPressed(Key::D))
                     transform[3][0] += speed * ts;
-                if (Input::IsKeyPressed(KeyCode::W))
+                if (Input::IsKeyPressed(Key::W))
                     transform[3][1] += speed * ts;
-                if (Input::IsKeyPressed(KeyCode::S))
+                if (Input::IsKeyPressed(Key::S))
                     transform[3][1] -= speed * ts;
             }
         };
@@ -229,8 +229,8 @@ namespace Hyperion {
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
             m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-            const auto textureID = reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentRendererID());  // NOLINT(performance-no-int-to-ptr)
-            ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0.0f, 1.0f }, ImVec2{ 1.0f, 0.0f });
+            uint64_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
+            ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0.0f, 1.0f }, ImVec2{ 1.0f, 0.0f });
             ImGui::End();
         }
 
