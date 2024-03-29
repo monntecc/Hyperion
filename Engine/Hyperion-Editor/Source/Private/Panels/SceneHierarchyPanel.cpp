@@ -2,7 +2,7 @@
 #include "Runtime/Scene/Components.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
-#include <imgui/imgui.h>
+#include <imgui.h>
 
 namespace Hyperion {
 
@@ -68,7 +68,16 @@ namespace Hyperion {
 
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), tag.c_str());
+
+#ifdef HR_PLATFORM_WINDOWS
+            strcpy_s(buffer, sizeof(buffer), tag.c_str());
+#else
+            // Using strncpy with manual null-termination
+            // Ensure buffer is large enough to accommodate the copied string and null-terminator
+            #include <cstring>
+            strncpy(buffer, tag.c_str(), sizeof(buffer) - 1); // Use sizeof(buffer) - 1 to leave space for the null-terminator
+            buffer[sizeof(buffer) - 1] = '\0'; // Null-terminate the string manually
+#endif
 			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);

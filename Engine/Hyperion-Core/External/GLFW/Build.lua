@@ -21,7 +21,6 @@ project "GLFW"
         "src/null_platform.h",
         "src/null_joystick.h",
         "src/null_init.c",
-
         "src/null_monitor.c",
         "src/null_window.c",
         "src/null_joystick.c",
@@ -44,6 +43,8 @@ project "GLFW"
             "src/xkb_unicode.c",
             "src/posix_time.c",
             "src/posix_thread.c",
+            "src/posix_module.c",
+            "src/posix_poll.c",
             "src/glx_context.c",
             "src/egl_context.c",
             "src/osmesa_context.c",
@@ -53,7 +54,6 @@ project "GLFW"
         defines
         {
             "_GLFW_X11"
-        
         }
 
     filter "system:windows"
@@ -80,7 +80,6 @@ project "GLFW"
         { 
             "_GLFW_WIN32",
             "_CRT_SECURE_NO_WARNINGS"
-
         }
 
     filter "configurations:Debug"

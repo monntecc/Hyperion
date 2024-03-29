@@ -36,5 +36,9 @@ int main(int argc, char** argv)
 	app->Run();
 	delete app;
 
-	return FALSE;
+#ifdef HR_PLATFORM_WINDOWS
+    return FALSE;
+#else
+    return 0;
+#endif
 }

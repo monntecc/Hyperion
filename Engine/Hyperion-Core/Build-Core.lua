@@ -1,5 +1,5 @@
 project "Hyperion-Core"
-	kind "SharedLib"
+    kind "SharedLib"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "off"
@@ -28,8 +28,8 @@ project "Hyperion-Core"
 	{
 		"_CRT_SECURE_NO_WARNINGS",
 		"GLFW_INCLUDE_NONE",
-		"HR_DYNAMIC_LINK",
-		"HR_BUILD_DLL"
+        "HR_DYNAMIC_LINK",
+        "HR_BUILD_DLL"
 	}
 
 	includedirs
@@ -52,19 +52,7 @@ project "Hyperion-Core"
 		"GLFW",
 		"Glad",
 		"ImGui",
-        "Tracy",
-		"opengl32.lib",
-	}
-
-	postbuildcommands
-	{
-		-- Copy dll to editor project
-		("IF NOT EXIST %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor mkdir %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor"),
-		("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor/\""),
-
-		-- Copy dll to sandbox project
-		("IF NOT EXIST %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox mkdir %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox"),
-		("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox/\"")
+        "Tracy"
 	}
 
 	targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
@@ -72,6 +60,46 @@ project "Hyperion-Core"
 
 	filter "system:windows"
 		systemversion "latest"
+		links
+		{
+		    "opengl32.lib",
+		}
+		postbuildcommands
+        {
+            -- Copy dll to editor project
+            ("IF NOT EXIST %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor mkdir %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor"),
+            ("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor/\""),
+
+            -- Copy dll to sandbox project
+            ("IF NOT EXIST %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox mkdir %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox"),
+            ("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox/\"")
+        }
+        removefiles
+        {
+            "Source/**/RHI/Linux/**.cpp",
+            "Source/**/RHI/Linux/**.hpp",
+        }
+
+	filter "system:linux"
+	    links
+	    {
+	        "GL"
+	    }
+	    postbuildcommands
+        {
+            -- Copy shared library to editor project
+            "{MKDIR} %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor",
+            "{COPY} %{cfg.buildtarget.relpath} %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Editor/",
+
+            -- Copy shared library to sandbox project
+            "{MKDIR} %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox",
+            "{COPY} %{cfg.buildtarget.relpath} %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Sandbox/"
+        }
+        removefiles
+        {
+            "Source/**/RHI/Windows/**.cpp",
+            "Source/**/RHI/Windows/**.hpp",
+        }
 
 	filter "configurations:Debug"
 		defines "HR_DEBUG"
