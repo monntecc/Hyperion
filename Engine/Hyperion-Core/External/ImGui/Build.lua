@@ -17,14 +17,6 @@ project "ImGui"
 		"imgui.h"
 	}
 
-    defines { "IMGUI_API=__declspec(dllexport)" }
-
-	-- postbuildcommands
-	-- {
-	--	("IF NOT EXIST %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Core mkdir %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Core"),
-	--	("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Core/\"")
-	-- }
-
 	targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
 
@@ -32,6 +24,12 @@ project "ImGui"
 		systemversion "latest"
 		cppdialect "C++17"
 		staticruntime "off"
+        defines { "IMGUI_API=__declspec(dllexport)" }
+        -- postbuildcommands
+        -- {
+        --	("IF NOT EXIST %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Core mkdir %{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Core"),
+        --	("{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Binaries/" .. OutputDir .. "/Hyperion-Core/\"")
+        -- }
 
 	filter "system:linux"
 		pic "On"
