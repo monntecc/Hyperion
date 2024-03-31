@@ -87,8 +87,7 @@ namespace Hyperion {
 
         // Resize
         {
-            m_ViewportWidget.Resize(glm::vec2(static_cast<uint32_t>(m_ViewportWidget.GetSize().x),
-                static_cast<uint32_t>((m_ViewportWidget.GetSize().y))));
+            m_ViewportWidget.ResizeFrameBuffer();
 
             m_CameraController.OnResize(m_ViewportWidget.GetSize().x, m_ViewportWidget.GetSize().y);
             

@@ -11,12 +11,11 @@ namespace Hyperion {
 
 		void Init();
 		void Draw();
-		void Update();
 
+		void ResizeFrameBuffer();
 		void BindFrameBuffer();
 		void UnbindFrameBuffer();
 
-		void Resize(const glm::vec2& size) { m_ViewportSize = size; }
 		const glm::vec2& GetSize() const { return m_ViewportSize; }
 
 		bool IsFocused() const { return m_ViewportFocused; }

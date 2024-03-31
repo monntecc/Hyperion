@@ -31,11 +31,6 @@ namespace Hyperion {
 		ImGui::End();
 	}
 
-	void ViewportWidget::Update()
-	{
-
-	}
-
 	void ViewportWidget::UnbindFrameBuffer()
 	{
 		m_FrameBuffer->Unbind();
@@ -44,6 +39,11 @@ namespace Hyperion {
 	void ViewportWidget::BindFrameBuffer()
 	{
 		m_FrameBuffer->Bind();
+	}
+
+	void ViewportWidget::ResizeFrameBuffer()
+	{
+		m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
 	}
 
 }
