@@ -3,6 +3,7 @@
 #include "Hyperion.hpp"
 
 #include "Editor/Panels/SceneHierarchyPanel.hpp"
+#include "Editor/Widgets/TitlebarWidget.hpp"
 
 namespace Hyperion {
 
@@ -38,6 +39,7 @@ namespace Hyperion {
 
         // Panels
         SceneHierarchyPanel m_SceneHierarchyPanel;
+        TitlebarWidget m_TitlebarWidget;
     };
 
 }

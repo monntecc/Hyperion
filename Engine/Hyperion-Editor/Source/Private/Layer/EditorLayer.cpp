@@ -7,6 +7,8 @@
 
 #include <Tracy.hpp>
 
+#include <imgui_internal.h>
+
 namespace Hyperion {
 
     EditorLayer::EditorLayer() :
@@ -129,12 +131,12 @@ namespace Hyperion {
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
         if (opt_fullscreen)
         {
             const ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowPos(viewport->WorkPos + ImVec2(0,50.0f));
+            ImGui::SetNextWindowSize(viewport->WorkSize - ImVec2(0, 50.0f));
             ImGui::SetNextWindowViewport(viewport->ID);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -156,9 +158,10 @@ namespace Hyperion {
         // all active windows docked into it will lose their parent and become undocked.
         // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+
         if (!opt_padding)
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+        ImGui::Begin("MyDockSpace", &dockspaceOpen, window_flags);
         if (!opt_padding)
             ImGui::PopStyleVar();
 
@@ -173,18 +176,18 @@ namespace Hyperion {
             ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
 
-        // Menu bar
-        {
-            if (ImGui::BeginMenuBar())
-            {
-                if (ImGui::BeginMenu("File"))
-                {
-                    if (ImGui::MenuItem("Exit")) { Application::Get().Shutdown(); }
-                    ImGui::EndMenu();
-                }
-                ImGui::EndMenuBar();
-            }
-        }
+        //// Menu bar
+        //{
+        //    if (ImGui::BeginMenuBar())
+        //    {
+        //        if (ImGui::BeginMenu("File"))
+        //        {
+        //            if (ImGui::MenuItem("Exit")) { Application::Get().Shutdown(); }
+        //            ImGui::EndMenu();
+        //        }
+        //        ImGui::EndMenuBar();
+        //    }
+        //}
 
         // Scene Hierarchy panel
         m_SceneHierarchyPanel.OnImGuiRender();
@@ -222,6 +225,17 @@ namespace Hyperion {
 
     	ImGui::PopStyleVar();
 
+        ImGui::End();
+
+        // Render titlebar
+        ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
+        ImGui::SetNextWindowSize(ImVec2(ImGui::GetMainViewport()->Size.x, 50.0f));
+        ImGui::Begin("Titlebar", nullptr, ImGuiWindowFlags_NoDecoration |
+            ImGuiWindowFlags_NoSavedSettings |
+            ImGuiWindowFlags_NoFocusOnAppearing |
+            ImGuiWindowFlags_NoNav |
+            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking);
+        m_TitlebarWidget.DrawUITitlebar();
         ImGui::End();
     }
 

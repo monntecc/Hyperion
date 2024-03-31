@@ -12,6 +12,10 @@
 
 namespace Hyperion {
 
+    Window::Window()
+    {
+    }
+
     Scope<Window> Window::Create(const WindowProps& props)
     {
     #ifdef HR_PLATFORM_WINDOWS

@@ -14,7 +14,7 @@ namespace Hyperion
         ZoneScoped;
         
         int width, height, channels;
-        stbi_set_flip_vertically_on_load(1);
+        //stbi_set_flip_vertically_on_load(1);
         stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         
         HR_CORE_ASSERT(data, "Failed to load image!");
@@ -91,5 +91,17 @@ namespace Hyperion
         ZoneScoped;
         
         glBindTextureUnit(slot, m_RendererID);
+    }
+
+    GLenum OpenGLTexture2D::ImageFormatToGL(UI::ImageFormat format) const
+    {
+        switch (format)
+        {
+        case UI::ImageFormat::RGBA:    return GL_RGBA;
+        case UI::ImageFormat::RGBA32F: return GL_RGBA32F;
+        }
+
+        HR_CORE_ASSERT(false, "Unknown ImageFormat!");
+        return 0;
     }
 }

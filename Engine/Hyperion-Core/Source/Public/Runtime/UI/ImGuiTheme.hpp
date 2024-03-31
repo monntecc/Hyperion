@@ -9,8 +9,8 @@ namespace Hyperion::UI {
 	{
 		static inline float Convert_sRGB_FromLinear(float theLinearValue);
 		static inline float Convert_sRGB_ToLinear(float thesRGBValue);
-		ImVec4 ConvertFromSRGB(ImVec4 colour);
-		ImVec4 ConvertToSRGB(ImVec4 colour);
+		ImVec4 HYPERION_API ConvertFromSRGB(ImVec4 colour);
+		ImVec4 HYPERION_API ConvertToSRGB(ImVec4 colour);
 
 		// To experiment with editor theme live you can change these constexpr into static
 		// members of a static "Theme" class and add a quick ImGui window to adjust the colour values
@@ -121,6 +121,6 @@ namespace Hyperion::UI {
 		}
 	}
 
-	void SetEditorTheme();
+	void HYPERION_API SetEditorTheme();
 
 }

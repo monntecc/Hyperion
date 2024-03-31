@@ -3,7 +3,12 @@
 #include "Runtime/Core/Window.hpp"
 #include "Runtime/Renderer/GraphicsContext.hpp"
 
+#include "Runtime/Core/Base.hpp"
+#include "Runtime/Renderer/Texture.hpp"
+
 #include <GLFW/glfw3.h>
+
+#include <imgui_internal.h>
 
 namespace Hyperion {
 
@@ -24,7 +29,17 @@ namespace Hyperion {
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
+		void StartDrag() const override;
+		void StartResize(WindowBorder border) const override;
+
+		bool IsMaximized() const override;
+		bool IsMinimized() const override;
+
+		void Maximize(bool restore = false) const override;
+		void Minimize() const override;
+
 		void* GetNativeWindow() const override { return m_Window; }
+		const WindowProps& GetWindowData() const override { return m_WindowProps; }
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
@@ -41,6 +56,7 @@ namespace Hyperion {
 			EventCallbackFn EventCallback;
 		};
 
+		WindowProps m_WindowProps;
 		WindowData m_Data;
 	};
 

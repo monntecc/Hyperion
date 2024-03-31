@@ -29,7 +29,8 @@ project "Hyperion-Core"
 		"_CRT_SECURE_NO_WARNINGS",
 		"GLFW_INCLUDE_NONE",
         "HR_DYNAMIC_LINK",
-        "HR_BUILD_DLL"
+        "HR_BUILD_DLL",
+		"IMGUI_DEFINE_MATH_OPERATORS"
 	}
 
 	includedirs

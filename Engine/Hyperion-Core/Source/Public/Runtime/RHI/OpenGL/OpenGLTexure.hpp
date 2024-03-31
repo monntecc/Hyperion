@@ -2,6 +2,8 @@
 
 #include "Runtime/Renderer/Texture.hpp"
 
+#include "Runtime/UI/UI.hpp"
+
 #include <glad/glad.h>
 
 namespace Hyperion {
@@ -25,6 +27,8 @@ namespace Hyperion {
 	        const auto& texture2D = reinterpret_cast<OpenGLTexture2D&>(const_cast<Texture2D&>(other));
 	        return m_RendererID == texture2D.m_RendererID;
         }
+
+        GLenum ImageFormatToGL(UI::ImageFormat format) const;
 
     private:
         std::string m_Path;

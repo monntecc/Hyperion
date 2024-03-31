@@ -1,10 +1,15 @@
 #include "hrpch.hpp"
 
 #include "Runtime/Core/Application.hpp"
+
 #include "Runtime/UI/ImGuiLayer.hpp"
 #include "Runtime/UI/ImGuiTheme.hpp"
 
+#include "Runtime/UI/UI.hpp"
+
 #include <imgui.h>
+
+#include <imgui_internal.h>
 
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -115,8 +120,8 @@ namespace Hyperion {
 
 	void ImGuiLayer::OnImGuiRender()
 	{
-		// static bool show = true;
-		// ImGui::ShowDemoWindow(&show);
+		 //static bool show = true;
+		 //ImGui::ShowDemoWindow(&show);
 	}
 
 }

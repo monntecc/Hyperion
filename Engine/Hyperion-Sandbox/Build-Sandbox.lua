@@ -22,7 +22,7 @@ project "Hyperion-Sandbox"
 		"%{IncludeDir.glm}"
 	}
 
-	defines { "HR_DYNAMIC_LINK" }
+	defines { "HR_DYNAMIC_LINK", "IMGUI_DEFINE_MATH_OPERATORS" }
 
 	links { "Hyperion-Core" }
 

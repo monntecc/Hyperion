@@ -11,6 +11,8 @@
 #include "Runtime/Core/Assert.hpp"
 
 #include "Runtime/UI/ImGuiLayer.hpp"
+#include "Runtime/UI/UI.hpp"
+#include "Runtime/UI/ImGuiTheme.hpp"
 
 #include "Runtime/Core/Timestep.hpp"
 

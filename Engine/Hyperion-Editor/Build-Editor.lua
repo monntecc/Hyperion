@@ -22,7 +22,7 @@ project "Hyperion-Editor"
 		"%{IncludeDir.glm}"
 	}
 
-	defines { "HR_DYNAMIC_LINK" }
+	defines { "HR_DYNAMIC_LINK", "IMGUI_API=__declspec(dllimport)", "IMGUI_DEFINE_MATH_OPERATORS" }
 
 	links { "Hyperion-Core" }
 

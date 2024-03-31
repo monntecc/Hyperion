@@ -4,18 +4,32 @@
 #include "Runtime/Events/KeyEvent.hpp"
 #include "Runtime/Events/MouseEvent.hpp"
 
+#include "Runtime/Core/Application.hpp"
+
+#include "Runtime/UI/ImGuiTheme.hpp"
+#include "Runtime/UI/UI.hpp"
+
 #include "Runtime/RHI/OpenGL/OpenGLContext.hpp"
+
+#include "Runtime/Renderer/Texture.hpp"
+
 #include "Runtime/RHI/Windows/WindowsWindow.hpp"
 
 #include <Tracy.hpp>
 
 #include "Runtime/Renderer/Renderer.hpp"
 
+#include <imgui.h>
+
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+
 namespace Hyperion {
 
 	static uint32_t s_GLFWWindowCount = 0;
 
-	WindowsWindow::WindowsWindow(const WindowProps& props)
+	WindowsWindow::WindowsWindow(const WindowProps& props) 
+		: m_WindowProps(props)
 	{
 		WindowsWindow::Init(props);
 	}
@@ -63,13 +77,16 @@ namespace Hyperion {
 		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
-		glfwSetWindowUserPointer(m_Window, &m_Data);
+		// Hide system titlebar
+		glfwSetWindowAttrib(m_Window, GLFW_DECORATED, GLFW_FALSE);
+
+		glfwSetWindowUserPointer(m_Window, this);
 		SetVSync(true);
 
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			WindowData& data = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window))->m_Data;
 			data.Width = width;
 			data.Height = height;
 
@@ -79,14 +96,14 @@ namespace Hyperion {
 
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 		{
-			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window))->m_Data;
 			WindowCloseEvent event;
 			data.EventCallback(event);
 		});
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
-			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window))->m_Data;
 
 			switch (action)
 			{
@@ -114,7 +131,7 @@ namespace Hyperion {
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
 		{
-			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window))->m_Data;
 
 			KeyTypedEvent event(keycode);
 			data.EventCallback(event);
@@ -122,30 +139,56 @@ namespace Hyperion {
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
-			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			WindowsWindow& windowHandle = *static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
 
 			switch (action)
 			{
 				case GLFW_PRESS:
 				{
 					MouseButtonPressedEvent event(button);
-					data.EventCallback(event);
+					windowHandle.m_Data.EventCallback(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
 					MouseButtonReleasedEvent event(button);
-					data.EventCallback(event);
+					windowHandle.m_Data.EventCallback(event);
 					break;
 				}
 				
 				default: break;
 			}
+
+			if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT)
+			{
+				double xPos, yPos;
+				int width, height;
+				glfwGetCursorPos(window, &xPos, &yPos);
+				glfwGetWindowSize(window, &width, &height);
+
+				const int borderSize = 4;
+				if (xPos < borderSize || yPos < borderSize || xPos > width - borderSize || yPos > height - borderSize)
+					windowHandle.StartResize(WindowBorder::TopLeft);
+				if (xPos > width - borderSize || yPos < borderSize || xPos < borderSize || yPos > height - borderSize)
+					windowHandle.StartResize(WindowBorder::TopRight);
+				if (xPos < borderSize || yPos > height - borderSize || xPos > width - borderSize || yPos < borderSize)
+					windowHandle.StartResize(WindowBorder::BottomLeft);
+				if (xPos > width - borderSize || yPos > height - borderSize || xPos < borderSize || yPos < borderSize)
+					windowHandle.StartResize(WindowBorder::BottomRight);
+				if (xPos < borderSize || yPos < height - borderSize || xPos > width - borderSize || yPos > height - borderSize)
+					windowHandle.StartResize(WindowBorder::Bottom);
+				if (xPos < width - borderSize || yPos < borderSize || xPos > width - borderSize || yPos > height - borderSize)
+					windowHandle.StartResize(WindowBorder::Right);
+				if (xPos < borderSize || yPos < borderSize || xPos < width - borderSize || yPos > borderSize)
+					windowHandle.StartResize(WindowBorder::Left);
+				if(xPos < width - borderSize || yPos < borderSize || xPos > width - borderSize || yPos < height - borderSize)
+					windowHandle.StartResize(WindowBorder::Top);
+			}
 		});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
 		{
-			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const WindowData& data = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window))->m_Data;
 
 			MouseScrolledEvent event(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			data.EventCallback(event);
@@ -153,10 +196,10 @@ namespace Hyperion {
 
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
 		{
-			const WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			WindowsWindow& windowHandle = *static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
 
 			MouseMovedEvent event(static_cast<float>(xPos), static_cast<float>(yPos));
-			data.EventCallback(event);
+			windowHandle.m_Data.EventCallback(event);
 		});
 	}
 	
@@ -197,6 +240,67 @@ namespace Hyperion {
 	bool WindowsWindow::IsVSync() const
 	{
 		return m_Data.VSync;
+	}
+
+	void WindowsWindow::StartDrag() const
+	{
+		if (!m_Window)
+			return;
+
+		ReleaseCapture();
+		SendMessageA(static_cast<HWND>(glfwGetWin32Window(m_Window)), WM_NCLBUTTONDOWN, HTCAPTION, 0);
+	}
+
+	void WindowsWindow::StartResize(WindowBorder border) const
+	{
+		if (!m_Window)
+			return;
+
+		// Convert from GLFW border to Windows border
+		WPARAM windowsBorder = 0;
+		switch (border)
+		{
+			case WindowBorder::Left: windowsBorder = HTLEFT; break;
+			case WindowBorder::Top: windowsBorder = HTTOP; break;
+			case WindowBorder::Right: windowsBorder = HTRIGHT; break;
+			case WindowBorder::Bottom: windowsBorder = HTBOTTOM; break;
+			case WindowBorder::TopLeft: windowsBorder = HTTOPLEFT; break;
+			case WindowBorder::TopRight: windowsBorder = HTTOPRIGHT; break;
+			case WindowBorder::BottomLeft: windowsBorder = HTBOTTOMLEFT; break;
+			case WindowBorder::BottomRight: windowsBorder = HTBOTTOMRIGHT; break;
+		}
+
+		ReleaseCapture();
+		SendMessageA(static_cast<HWND>(glfwGetWin32Window(m_Window)), WM_NCLBUTTONDOWN, windowsBorder, 0);
+	}
+
+	bool WindowsWindow::IsMaximized() const
+	{
+		return static_cast<bool>(glfwGetWindowAttrib(m_Window, GLFW_MAXIMIZED));
+	}
+
+	bool WindowsWindow::IsMinimized() const
+	{
+		return static_cast<bool>(glfwGetWindowAttrib(m_Window, GLFW_ICONIFIED));
+	}
+
+	void WindowsWindow::Maximize(bool restore) const
+	{
+		if (!m_Window)
+			return;
+
+		if (restore)
+			glfwRestoreWindow(m_Window);
+		else
+			glfwMaximizeWindow(m_Window);
+	}
+
+	void WindowsWindow::Minimize() const
+	{
+		if (!m_Window)
+			return;
+
+		glfwIconifyWindow(m_Window);
 	}
 
 }

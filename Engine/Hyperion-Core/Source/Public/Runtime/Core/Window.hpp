@@ -7,6 +7,18 @@
 
 namespace Hyperion {
 
+	enum class HYPERION_API WindowBorder
+	{
+		Left = 0,
+		Top = 1,
+		Right = 2,
+		Bottom = 3,
+		TopLeft = 4,
+		TopRight = 5,
+		BottomLeft = 6,
+		BottomRight = 7
+	};
+
 	struct WindowProps
 	{
 		std::string Title;
@@ -26,7 +38,9 @@ namespace Hyperion {
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;
 
+		Window();
 		virtual ~Window() = default;
+		Window(const Window&) = delete;
 
 		virtual void OnUpdate() = 0;
 
@@ -38,8 +52,18 @@ namespace Hyperion {
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
+		virtual void StartDrag() const = 0;
+		virtual void StartResize(WindowBorder border) const = 0;
+
+		virtual bool IsMaximized() const = 0;
+		virtual bool IsMinimized() const = 0;
+
+		virtual void Maximize(bool restore = false) const = 0;
+		virtual void Minimize() const = 0;
+
 		// Window data
 		virtual void* GetNativeWindow() const = 0;
+		virtual const WindowProps& GetWindowData() const = 0;
 
 		// Window creation
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
