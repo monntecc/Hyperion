@@ -1,10 +1,13 @@
 #include "hrpch.hpp"
 
 #include "Engine/Scene/Scene.hpp"
+
 #include "Engine/Scene/Entity.hpp"
 #include "Engine/Scene/Components.hpp"
 
 #include "Engine/Renderer/Renderer2D.hpp"
+
+#include <assert.h>
 
 namespace Hyperion {
 
@@ -23,6 +26,11 @@ namespace Hyperion {
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Unnamed entity" : name;
 		return entity;
+	}
+
+	void Scene::DestroyEntity(Entity entity)
+	{
+		m_Registry.destroy(entity);
 	}
 
 	void Scene::OnUpdate(Timestep ts)
@@ -95,5 +103,38 @@ namespace Hyperion {
 				cameraComponent.Camera.SetViewportSize(width, height);
 		}
 
+	}
+
+	template<typename T>
+	void Scene::OnComponentAdded(Entity entity, T& component)
+	{
+		static_assert(sizeof(T) == 0);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+	{
+		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
+			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	{
 	}
 }
