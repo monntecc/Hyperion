@@ -1,7 +1,7 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Scene/Entity.hpp"
-#include "Runtime/Scene/Scene.hpp"
+#include "Engine/Scene/Entity.hpp"
+#include "Engine/Scene/Scene.hpp"
 
 namespace Hyperion {
 

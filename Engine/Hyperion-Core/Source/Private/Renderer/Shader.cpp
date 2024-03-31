@@ -1,9 +1,9 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Renderer/Shader.hpp"
-#include "Runtime/Renderer/Renderer.hpp"
+#include "Engine/Renderer/Shader.hpp"
+#include "Engine/Renderer/Renderer.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLShader.hpp"
+#include "Engine/RHI/OpenGL/OpenGLShader.hpp"
 
 namespace Hyperion {
 

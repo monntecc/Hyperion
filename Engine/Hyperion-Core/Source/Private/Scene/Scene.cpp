@@ -1,10 +1,10 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Scene/Scene.hpp"
-#include "Runtime/Scene/Entity.hpp"
-#include "Runtime/Scene/Components.hpp"
+#include "Engine/Scene/Scene.hpp"
+#include "Engine/Scene/Entity.hpp"
+#include "Engine/Scene/Components.hpp"
 
-#include "Runtime/Renderer/Renderer2D.hpp"
+#include "Engine/Renderer/Renderer2D.hpp"
 
 namespace Hyperion {
 

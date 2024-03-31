@@ -1,9 +1,9 @@
 ﻿#include "hrpch.hpp"
 
-#include "Runtime/Renderer/Texture.hpp"
-#include "Runtime/Renderer/Renderer.hpp"
+#include "Engine/Renderer/Texture.hpp"
+#include "Engine/Renderer/Renderer.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLTexure.hpp"
+#include "Engine/RHI/OpenGL/OpenGLTexure.hpp"
 
 namespace Hyperion {
     

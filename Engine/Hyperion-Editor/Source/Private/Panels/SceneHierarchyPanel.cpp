@@ -1,5 +1,5 @@
 #include "Editor/Panels/SceneHierarchyPanel.hpp"
-#include "Runtime/Scene/Components.hpp"
+#include "Engine/Scene/Components.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>

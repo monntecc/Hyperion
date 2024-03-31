@@ -1,9 +1,9 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Renderer/VertexArray.hpp"
-#include "Runtime/Renderer/Renderer.hpp"
+#include "Engine/Renderer/VertexArray.hpp"
+#include "Engine/Renderer/Renderer.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLVertexArray.hpp"
+#include "Engine/RHI/OpenGL/OpenGLVertexArray.hpp"
 
 namespace Hyperion {
 

@@ -1,8 +1,8 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Core/Input.hpp"
+#include "Engine/Core/Input.hpp"
 
-#include "Runtime/Core/Application.hpp"
+#include "Engine/Core/Application.hpp"
 
 #include <GLFW/glfw3.h>
 

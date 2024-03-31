@@ -1,10 +1,10 @@
 ﻿#include "hrpch.hpp"
 
-#include "Runtime/Renderer/Renderer2D.hpp"
+#include "Engine/Renderer/Renderer2D.hpp"
 
-#include "Runtime/Renderer/RenderCommand.hpp"
-#include "Runtime/Renderer/Shader.hpp"
-#include "Runtime/Renderer/VertexArray.hpp"
+#include "Engine/Renderer/RenderCommand.hpp"
+#include "Engine/Renderer/Shader.hpp"
+#include "Engine/Renderer/VertexArray.hpp"
 
 #include <glm/ext/matrix_transform.hpp>
 

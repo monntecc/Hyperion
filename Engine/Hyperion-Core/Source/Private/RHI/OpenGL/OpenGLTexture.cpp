@@ -1,6 +1,6 @@
 ﻿#include "hrpch.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLTexure.hpp"
+#include "Engine/RHI/OpenGL/OpenGLTexure.hpp"
 
 #include <stb_image.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Runtime/Core/PlatformDetection.hpp"
+#include "Engine/Core/PlatformDetection.hpp"
 
 #ifdef HR_PLATFORM_WINDOWS
 #ifndef NOMINMAX
@@ -22,8 +22,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Runtime/Core/Base.hpp"
-#include <Runtime/Core/Log.hpp>
+#include "Engine/Core/Base.hpp"
+#include "Engine/Core/Log.hpp"
 
 #ifdef HR_PLATFORM_WINDOWS
 	#include <Windows.h>

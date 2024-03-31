@@ -1,9 +1,9 @@
 ﻿#include "hrpch.hpp"
 
-#include "Runtime/Renderer/GraphicsContext.hpp"
+#include "Engine/Renderer/GraphicsContext.hpp"
 
-#include "Runtime/Renderer/Renderer.hpp"
-#include "Runtime/RHI/OpenGL/OpenGLContext.hpp"
+#include "Engine/Renderer/Renderer.hpp"
+#include "Engine/RHI/OpenGL/OpenGLContext.hpp"
 
 namespace Hyperion {
 

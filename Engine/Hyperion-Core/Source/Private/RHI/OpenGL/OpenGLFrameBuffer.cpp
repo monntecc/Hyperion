@@ -1,6 +1,6 @@
 #include "hrpch.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLFrameBuffer.hpp"
+#include "Engine/RHI/OpenGL/OpenGLFrameBuffer.hpp"
 
 #include <glad/glad.h>
 

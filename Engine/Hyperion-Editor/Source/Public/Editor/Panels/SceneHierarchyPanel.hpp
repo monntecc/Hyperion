@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Runtime/Core/Base.hpp"
+#include "Engine/Core/Base.hpp"
 
-#include "Runtime/Scene/Scene.hpp"
-#include "Runtime/Scene/Entity.hpp"
+#include "Engine/Scene/Scene.hpp"
+#include "Engine/Scene/Entity.hpp"
 
 namespace Hyperion {
 

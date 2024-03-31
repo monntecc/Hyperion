@@ -1,7 +1,7 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Core/Application.hpp"
-#include "Runtime/Renderer/Renderer.hpp"
+#include "Engine/Core/Application.hpp"
+#include "Engine/Renderer/Renderer.hpp"
 
 #include <GLFW/glfw3.h>
 

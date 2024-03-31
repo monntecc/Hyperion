@@ -1,6 +1,6 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Scene/SceneCamera.hpp"
+#include "Engine/Scene/SceneCamera.hpp"
 
 namespace Hyperion {
 

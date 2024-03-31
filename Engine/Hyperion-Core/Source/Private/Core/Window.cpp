@@ -1,13 +1,13 @@
 ﻿#include "hrpch.hpp"
 
-#include "Runtime/Core/Window.hpp"
+#include "Engine/Core/Window.hpp"
 
 #ifdef HR_PLATFORM_WINDOWS
-    #include "Runtime/RHI/Windows/WindowsWindow.hpp"
+    #include "Engine/RHI/Windows/WindowsWindow.hpp"
 #endif
 
 #ifdef HR_PLATFORM_LINUX
-    #include "Runtime/RHI/Linux/LinuxWindow.hpp"
+    #include "Engine/RHI/Linux/LinuxWindow.hpp"
 #endif
 
 namespace Hyperion {

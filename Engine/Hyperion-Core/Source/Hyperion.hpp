@@ -2,47 +2,47 @@
 
 // For use by Hyperion applications
 
-#include "Runtime/Core/Base.hpp"
+#include "Engine/Core/Base.hpp"
 
-#include "Runtime/Core/Application.hpp"
-#include "Runtime/Core/Layer.hpp"
-#include "Runtime/Core/Log.hpp"
-#include "Runtime/Core/Input.hpp"
-#include "Runtime/Core/Assert.hpp"
+#include "Engine/Core/Application.hpp"
+#include "Engine/Core/Layer.hpp"
+#include "Engine/Core/Log.hpp"
+#include "Engine/Core/Input.hpp"
+#include "Engine/Core/Assert.hpp"
 
-#include "Runtime/UI/ImGuiLayer.hpp"
-#include "Runtime/UI/UI.hpp"
-#include "Runtime/UI/ImGuiTheme.hpp"
+#include "Engine/UI/ImGuiLayer.hpp"
+#include "Engine/UI/UI.hpp"
+#include "Engine/UI/ImGuiTheme.hpp"
 
-#include "Runtime/Core/Timestep.hpp"
+#include "Engine/Core/Timestep.hpp"
 
 // ------------------- Scene -------------------
-#include "Runtime/Scene/Scene.hpp"
-#include "Runtime/Scene/Entity.hpp"
-#include "Runtime/Scene/Components.hpp"
-#include "Runtime/Scene/ScriptableEntity.hpp"
+#include "Engine/Scene/Scene.hpp"
+#include "Engine/Scene/Entity.hpp"
+#include "Engine/Scene/Components.hpp"
+#include "Engine/Scene/ScriptableEntity.hpp"
 // ------------------------------------------------
 
 // ------------------- Renderer -------------------
-#include "Runtime/Renderer/Renderer.hpp"
-#include "Runtime/Renderer/Renderer2D.hpp"
-#include "Runtime/Renderer/RenderCommand.hpp"
+#include "Engine/Renderer/Renderer.hpp"
+#include "Engine/Renderer/Renderer2D.hpp"
+#include "Engine/Renderer/RenderCommand.hpp"
 
-#include "Runtime/Renderer/Buffer.hpp"
-#include "Runtime/Renderer/FrameBuffer.hpp"
-#include "Runtime/Renderer/Shader.hpp"
-#include "Runtime/Renderer/VertexArray.hpp"
+#include "Engine/Renderer/Buffer.hpp"
+#include "Engine/Renderer/FrameBuffer.hpp"
+#include "Engine/Renderer/Shader.hpp"
+#include "Engine/Renderer/VertexArray.hpp"
 
-#include "Runtime/Renderer/Texture.hpp"
+#include "Engine/Renderer/Texture.hpp"
 
-#include "Runtime/Renderer/OrthographicCamera.hpp"
-#include "Runtime/Renderer/OrthographicCameraController.hpp"
+#include "Engine/Renderer/OrthographicCamera.hpp"
+#include "Engine/Renderer/OrthographicCameraController.hpp"
 // ------------------------------------------------
 
 // ------------ KeyCodes ------------
-#include "Runtime/Core/MouseCodes.hpp"
-#include "Runtime/Events/MouseEvent.hpp"
-#include "Runtime/Events/ApplicationEvent.hpp"
-#include "Runtime/Events/KeyEvent.hpp"
-#include "Runtime/Core/KeyCodes.hpp"
+#include "Engine/Core/MouseCodes.hpp"
+#include "Engine/Events/MouseEvent.hpp"
+#include "Engine/Events/ApplicationEvent.hpp"
+#include "Engine/Events/KeyEvent.hpp"
+#include "Engine/Core/KeyCodes.hpp"
 // ----------------------------------

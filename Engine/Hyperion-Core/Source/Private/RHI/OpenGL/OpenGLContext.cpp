@@ -1,6 +1,6 @@
 #include "hrpch.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLContext.hpp"
+#include "Engine/RHI/OpenGL/OpenGLContext.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

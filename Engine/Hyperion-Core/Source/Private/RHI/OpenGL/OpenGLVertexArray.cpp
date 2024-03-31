@@ -1,6 +1,6 @@
 #include "hrpch.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLVertexArray.hpp"
+#include "Engine/RHI/OpenGL/OpenGLVertexArray.hpp"
 
 #include <glad/glad.h>
 

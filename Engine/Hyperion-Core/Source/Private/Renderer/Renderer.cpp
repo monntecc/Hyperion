@@ -1,7 +1,7 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Renderer/Renderer.hpp"
-#include "Runtime/Renderer/Renderer2D.hpp"
+#include "Engine/Renderer/Renderer.hpp"
+#include "Engine/Renderer/Renderer2D.hpp"
 
 #include <Tracy.hpp>
 

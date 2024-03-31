@@ -1,9 +1,9 @@
 #include "hrpch.hpp"
 
-#include "Runtime/Renderer/Buffer.hpp"
-#include "Runtime/Renderer/Renderer.hpp"
+#include "Engine/Renderer/Buffer.hpp"
+#include "Engine/Renderer/Renderer.hpp"
 
-#include "Runtime/RHI/OpenGL/OpenGLBuffer.hpp"
+#include "Engine/RHI/OpenGL/OpenGLBuffer.hpp"
 
 namespace Hyperion {
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
