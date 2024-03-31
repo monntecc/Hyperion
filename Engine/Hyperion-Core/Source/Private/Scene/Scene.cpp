@@ -46,7 +46,7 @@ namespace Hyperion {
 
 		// Render 2D
 		Camera* mainCamera = nullptr;
-		glm::mat4* cameraTransform = nullptr;
+		glm::mat4 cameraTransform;
 		{
 			const auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (const auto entity : view)
@@ -57,7 +57,7 @@ namespace Hyperion {
 				if (camera.Primary)
 				{
 					mainCamera = &camera.Camera;
-					cameraTransform = &transform.Transform;
+					cameraTransform = transform.GetTransform();
 					break;
 				}
 			}
@@ -65,7 +65,7 @@ namespace Hyperion {
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(*mainCamera, *cameraTransform);
+			Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
 			const auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (const auto entity : group)
@@ -73,7 +73,7 @@ namespace Hyperion {
 				auto transform = group.get<TransformComponent>(entity);
 				auto sprite = group.get<SpriteRendererComponent>(entity);
 
-				Renderer2D::DrawQuad(transform.Transform, sprite.Color);
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
 
 			Renderer2D::EndScene();
