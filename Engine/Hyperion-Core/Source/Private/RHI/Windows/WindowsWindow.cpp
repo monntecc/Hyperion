@@ -248,7 +248,7 @@ namespace Hyperion {
 			return;
 
 		ReleaseCapture();
-		SendMessageA(static_cast<HWND>(glfwGetWin32Window(m_Window)), WM_NCLBUTTONDOWN, HTCAPTION, 0);
+		SendMessageA(glfwGetWin32Window(m_Window), WM_NCLBUTTONDOWN, HTCAPTION, 0);
 	}
 
 	void WindowsWindow::StartResize(WindowBorder border) const
@@ -270,8 +270,9 @@ namespace Hyperion {
 			case WindowBorder::BottomRight: windowsBorder = HTBOTTOMRIGHT; break;
 		}
 
+		// Resize window
 		ReleaseCapture();
-		SendMessageA(static_cast<HWND>(glfwGetWin32Window(m_Window)), WM_NCLBUTTONDOWN, windowsBorder, 0);
+		SendMessageA(glfwGetWin32Window(m_Window), WM_NCLBUTTONDOWN, windowsBorder, 0);
 	}
 
 	bool WindowsWindow::IsMaximized() const

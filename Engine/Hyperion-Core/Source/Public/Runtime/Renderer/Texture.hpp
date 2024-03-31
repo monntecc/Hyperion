@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Runtime/UI/ImageUI.hpp"
-
 namespace Hyperion {
 
     class HYPERION_API Texture

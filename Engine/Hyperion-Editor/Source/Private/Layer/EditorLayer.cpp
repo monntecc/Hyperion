@@ -19,10 +19,9 @@ namespace Hyperion {
 
     void EditorLayer::OnAttach()
     {
-        FrameBufferSpecification specification = {};
-        specification.Width = 1280;
-        specification.Height = 720;
-        m_FrameBuffer = FrameBuffer::Create(specification);
+        FrameMarkNamed("EditorLayer::OnAttach");
+
+        m_ViewportWidget.Init();
 
         m_ActiveScene = CreateRef<Scene>();
 
@@ -32,6 +31,7 @@ namespace Hyperion {
 
         auto redSquare = m_ActiveScene->CreateEntity("Red Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
+        redSquare.GetComponent<TransformComponent>().Transform[3][0] = 2.0f;
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
         m_CameraEntity.AddComponent<CameraComponent>();
@@ -87,22 +87,24 @@ namespace Hyperion {
 
         // Resize
         {
-            m_FrameBuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x),
-                static_cast<uint32_t>(m_ViewportSize.y));
-            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_ViewportWidget.Resize(glm::vec2(static_cast<uint32_t>(m_ViewportWidget.GetSize().x),
+                static_cast<uint32_t>((m_ViewportWidget.GetSize().y))));
 
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_CameraController.OnResize(m_ViewportWidget.GetSize().x, m_ViewportWidget.GetSize().y);
+            
+            m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportWidget.GetSize().x),
+                static_cast<uint32_t>((m_ViewportWidget.GetSize().y)));
         }
 
         // Update
-		if (m_ViewportFocused)
+		if (m_ViewportWidget.IsFocused())
             m_CameraController.OnUpdate(timestep);
 
         // Render
         Renderer2D::ResetStats();
 
         // Bind framebuffer, set color
-        m_FrameBuffer->Bind();
+        m_ViewportWidget.BindFrameBuffer();
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         RenderCommand::Clear();
 
@@ -114,7 +116,7 @@ namespace Hyperion {
 
     	Renderer2D::EndScene();
 
-        m_FrameBuffer->Unbind();
+        m_ViewportWidget.UnbindFrameBuffer();
     }
 
     void EditorLayer::OnEvent(Event& event)
@@ -176,52 +178,16 @@ namespace Hyperion {
             ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
 
-        //// Menu bar
-        //{
-        //    if (ImGui::BeginMenuBar())
-        //    {
-        //        if (ImGui::BeginMenu("File"))
-        //        {
-        //            if (ImGui::MenuItem("Exit")) { Application::Get().Shutdown(); }
-        //            ImGui::EndMenu();
-        //        }
-        //        ImGui::EndMenuBar();
-        //    }
-        //}
-
         // Scene Hierarchy panel
         m_SceneHierarchyPanel.OnImGuiRender();
 
-        // Stats panel
-        {
-            ImGui::Begin("Stats");
-            const auto stats = Renderer2D::GetStats();
-            ImGui::Text("Renderer2D Stats:");
-            ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-            ImGui::Text("Quads: %d", stats.QuadCount);
-            ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-            ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-                
-            ImGui::End();
-        }
+        // Statistics widget
+        m_StatisticPanel.Draw();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
 
-        // Viewport panel
-        {
-            ImGui::Begin("Viewport");
-            {
-                m_ViewportFocused = ImGui::IsWindowFocused(); // is window focused?
-                m_ViewportHovered = ImGui::IsWindowHovered(); // is mouse hovered over active window?
-                Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered); // if viewport not focused, block events
-            }
-            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-            uint64_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
-            ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0.0f, 1.0f }, ImVec2{ 1.0f, 0.0f });
-            ImGui::End();
-        }
+        // Viewport widget
+        m_ViewportWidget.Draw();
 
     	ImGui::PopStyleVar();
 

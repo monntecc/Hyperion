@@ -2,6 +2,8 @@
 
 #include "Hyperion.hpp"
 
+#include "Editor/Widgets/MenubarWidget.hpp"
+
 namespace Hyperion {
 
 	class TitlebarWidget {
@@ -18,6 +20,9 @@ namespace Hyperion {
 		Ref<Texture2D> m_IconMinimize;
 		Ref<Texture2D> m_IconMaximize;
 		Ref<Texture2D> m_IconRestore;
+
+		// Widgets
+		MenubarWidget m_MenubarWidget;
 	};
 
 }

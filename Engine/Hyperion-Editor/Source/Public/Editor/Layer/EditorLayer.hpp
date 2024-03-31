@@ -3,7 +3,10 @@
 #include "Hyperion.hpp"
 
 #include "Editor/Panels/SceneHierarchyPanel.hpp"
+#include "Editor/Panels/StatisticPanel.hpp"
+
 #include "Editor/Widgets/TitlebarWidget.hpp"
+#include "Editor/Widgets/ViewportWidget.hpp"
 
 namespace Hyperion {
 
@@ -21,7 +24,6 @@ namespace Hyperion {
         void OnDetach() override;
     private:
         OrthographicCameraController m_CameraController;
-        Ref<FrameBuffer> m_FrameBuffer;
 
     	Ref<Scene> m_ActiveScene;
         Entity m_SquareEntity;
@@ -31,15 +33,15 @@ namespace Hyperion {
 
         bool m_PrimaryCamera = true;
 
-        bool m_ViewportFocused = false;
-        bool m_ViewportHovered= false;
-        glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
-
         glm::vec4 m_SquareColor = { 0.0f, 1.0f, 0.0f, 1.0f };
 
         // Panels
         SceneHierarchyPanel m_SceneHierarchyPanel;
+        StatisticPanel m_StatisticPanel;
+
+        // Widgets
         TitlebarWidget m_TitlebarWidget;
+        ViewportWidget m_ViewportWidget;
     };
 
 }

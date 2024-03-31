@@ -3,7 +3,6 @@
 namespace Hyperion {
 
 	TitlebarWidget::TitlebarWidget()
-		: m_TitleBarHovered(false)
 	{
 		// Load images
 		m_AppHeaderIcon = Texture2D::Create("Assets/Icons/Logo.png");
@@ -69,6 +68,22 @@ namespace Hyperion {
 				m_TitleBarHovered = true; // Account for the top-most pixels which don't register
 		}
 
+		// Draw Menubar
+		{
+			ImGui::SuspendLayout();
+			{
+				ImGui::SetItemAllowOverlap();
+				const float logoHorizontalOffset = 16.0f * 2.0f + 48.0f + windowPadding.x;
+				ImGui::SetCursorPos(ImVec2(logoHorizontalOffset, 6.0f + titlebarVerticalOffset));
+				m_MenubarWidget.Draw();
+
+				if (ImGui::IsItemHovered())
+					m_TitleBarHovered = false;
+			}
+
+			ImGui::ResumeLayout();
+		}
+
 		{
 			// Centered Window title
 			ImVec2 currentCursorPos = ImGui::GetCursorPos();
@@ -79,9 +94,9 @@ namespace Hyperion {
 		}
 
 		// Window buttons
-		const ImU32 buttonColN = UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 0.9f);
-		const ImU32 buttonColH = UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.2f);
-		const ImU32 buttonColP = UI::Colors::Theme::textDarker;
+		const ImU32 buttonColN = UI::Colors::ColorWithMultipliedValue(IM_COL32(192, 192, 192, 255), 0.9f);
+		const ImU32 buttonColH = UI::Colors::ColorWithMultipliedValue(IM_COL32(192, 192, 192, 255), 1.2f);
+		const ImU32 buttonColP = IM_COL32(128, 128, 128, 255);
 		const float buttonWidth = 14.0f;
 		const float buttonHeight = 14.0f;
 
@@ -127,7 +142,7 @@ namespace Hyperion {
 			if (ImGui::InvisibleButton("Close", ImVec2(buttonWidth, buttonHeight)))
 				Application::Get().Shutdown();
 
-			UI::DrawButtonImage(m_IconClose, UI::Colors::Theme::text, UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f), buttonColP);
+			UI::DrawButtonImage(m_IconClose, IM_COL32(192, 192, 192, 255), UI::Colors::ColorWithMultipliedValue(IM_COL32(192, 192, 192, 255), 1.4f), buttonColP);
 		}
 
 		ImGui::Spring(-1.0f, 18.0f);
