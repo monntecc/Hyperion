@@ -26,7 +26,7 @@ namespace Hyperion {
 		uint32_t Height;
 
 		WindowProps(const std::string& title = "Hyperion Engine",
-			uint32_t width = 1280, uint32_t height = 720)
+			uint32_t width = 1400, uint32_t height = 800)
 			: Title(title), Width(width), Height(height)
 		{
 		}

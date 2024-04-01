@@ -171,11 +171,16 @@ namespace Hyperion {
 
         // Submit the DockSpace
         const ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
+        float minWinSizeX = style.WindowMinSize.x;
+        style.WindowMinSize.x = 370.0f;
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
         {
             const ImGuiID dockspaceId = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
+
+        style.WindowMinSize.x = minWinSizeX;
 
         // Scene Hierarchy panel
         m_SceneHierarchyPanel.OnImGuiRender();
