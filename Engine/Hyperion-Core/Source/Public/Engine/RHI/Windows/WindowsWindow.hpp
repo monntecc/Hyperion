@@ -1,13 +1,10 @@
 #pragma once
 
+#include "Engine/Core/Base.hpp"
 #include "Engine/Core/Window.hpp"
 #include "Engine/Renderer/GraphicsContext.hpp"
 
-#include "Engine/Core/Base.hpp"
-#include "Engine/Renderer/Texture.hpp"
-
 #include <GLFW/glfw3.h>
-
 #include <imgui_internal.h>
 
 namespace Hyperion {

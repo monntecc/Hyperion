@@ -1,24 +1,16 @@
 #include "hrpch.hpp"
 
+#include "Engine/Core/Application.hpp"
 #include "Engine/Events/ApplicationEvent.hpp"
 #include "Engine/Events/KeyEvent.hpp"
 #include "Engine/Events/MouseEvent.hpp"
 
-#include "Engine/Core/Application.hpp"
-
-#include "Engine/UI/ImGuiTheme.hpp"
-#include "Engine/UI/UI.hpp"
-
 #include "Engine/RHI/OpenGL/OpenGLContext.hpp"
-
-#include "Engine/Renderer/Texture.hpp"
-
 #include "Engine/RHI/Windows/WindowsWindow.hpp"
-
-#include <Tracy.hpp>
 
 #include "Engine/Renderer/Renderer.hpp"
 
+#include <Tracy.hpp>
 #include <imgui.h>
 
 #define GLFW_EXPOSE_NATIVE_WIN32

@@ -22,7 +22,7 @@ project "Hyperion-Editor"
 		"%{IncludeDir.glm}"
 	}
 
-	defines { "HR_DYNAMIC_LINK", "IMGUI_API=__declspec(dllimport)", "IMGUI_DEFINE_MATH_OPERATORS" }
+	defines { "HR_DYNAMIC_LINK", "IMGUI_DEFINE_MATH_OPERATORS" }
 
 	links { "Hyperion-Core" }
 
@@ -31,6 +31,11 @@ project "Hyperion-Editor"
 
 	filter "system:windows"
 		systemversion "latest"
+		defines { "IMGUI_API=__declspec(dllimport)" }
+
+	filter "system:linux"
+		systemversion "latest"
+	    defines { "IMGUI_API=__attribute__ ((dllexport))" }
 
 	filter "configurations:Debug"
 		defines "HR_DEBUG"
