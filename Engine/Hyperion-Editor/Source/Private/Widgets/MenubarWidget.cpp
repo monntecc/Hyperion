@@ -10,7 +10,6 @@ namespace Hyperion {
 	{
 		const ImRect menuBarRect = { ImGui::GetCursorPos(), { ImGui::GetContentRegionAvail().x + ImGui::GetCursorScreenPos().x, ImGui::GetFrameHeightWithSpacing() } };
 
-		ImGui::BeginGroup();
 		if (BeginMenubar(menuBarRect))
 		{
 			if (ImGui::BeginMenu("File"))
@@ -26,7 +25,6 @@ namespace Hyperion {
 		}
 
 		EndMenubar();
-		ImGui::EndGroup();
 	}
 
 	bool MenubarWidget::BeginMenubar(const ImRect& barRectangle)
@@ -36,8 +34,6 @@ namespace Hyperion {
 
 		if (window->SkipItems)
 			return false;
-		/*if (!(window->Flags & ImGuiWindowFlags_MenuBar))
-			return false;*/
 
 		IM_ASSERT(!window->DC.MenuBarAppending);
 		ImGui::BeginGroup(); // Backup position on layer 0 // FIXME: Misleading to use a group for that backup/restore
@@ -83,7 +79,7 @@ namespace Hyperion {
 				// This involve a one-frame delay which isn't very problematic in this situation. We could remove it by scoring in advance for multiple window (probably not worth bothering)
 				const ImGuiNavLayer layer = ImGuiNavLayer_Menu;
 				IM_ASSERT(window->DC.NavLayersActiveMaskNext & (1 << layer)); // Sanity check
-				ImGui::FocusWindow(window);
+				//ImGui::FocusWindow(window);
 				ImGui::SetNavID(window->NavLastIds[layer], layer, 0, window->NavRectRel[layer]);
 				g.NavDisableHighlight = true; // Hide highlight for the current frame so we don't see the intermediary selection.
 				g.NavDisableMouseHover = g.NavMousePosDirty = true;

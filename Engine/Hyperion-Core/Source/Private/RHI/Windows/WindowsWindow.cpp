@@ -34,7 +34,7 @@ namespace Hyperion {
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		ZoneScoped;
-		
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -44,7 +44,7 @@ namespace Hyperion {
 		if (s_GLFWWindowCount == 0)
 		{
 			ZoneScoped;
-			
+
 			HR_CORE_INFO("Initializing GLFW");
 			const int _ = glfwInit();
 
@@ -63,19 +63,33 @@ namespace Hyperion {
 				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 		#endif
 
-		m_Window = glfwCreateWindow(static_cast<int>(props.Width), 
+		m_Window = glfwCreateWindow(static_cast<int>(props.Width),
 			static_cast<int>(props.Height), m_Data.Title.c_str(), nullptr, nullptr);
 
 		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
-		// Hide system titlebar
-		glfwSetWindowAttrib(m_Window, GLFW_DECORATED, GLFW_FALSE);
+        GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* videoMode = glfwGetVideoMode(primaryMonitor);
+
+        int monitorX, monitorY;
+        glfwGetMonitorPos(primaryMonitor, &monitorX, &monitorY);
+
+        // Hide system titlebar
+        glfwWindowHint(GLFW_TITLEBAR, false);
+        glfwWindowHint(GLFW_VISIBLE, false);
+        glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, GLFW_TRUE);
+
+        // Center window
+        glfwSetWindowPos(m_Window,
+                         monitorX + (videoMode->width - m_Data.Width) / 2,
+                         monitorY + (videoMode->height - m_Data.Height) / 2);
 
 		glfwSetWindowUserPointer(m_Window, this);
 		SetVSync(true);
 
 		// Set GLFW callbacks
+        glfwSetWindowUserPointer(m_Window, this);
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
 			WindowData& data = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window))->m_Data;
@@ -147,7 +161,7 @@ namespace Hyperion {
 					windowHandle.m_Data.EventCallback(event);
 					break;
 				}
-				
+
 				default: break;
 			}
 

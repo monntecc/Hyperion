@@ -28,8 +28,6 @@
 
 #include "internal.h"
 
-#if defined(GLFW_BUILD_WIN32_MODULE)
-
 //////////////////////////////////////////////////////////////////////////
 //////                       GLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
@@ -48,6 +46,4 @@ GLFWproc _glfwPlatformGetModuleSymbol(void* module, const char* name)
 {
     return (GLFWproc) GetProcAddress((HMODULE) module, name);
 }
-
-#endif // GLFW_BUILD_WIN32_MODULE
 

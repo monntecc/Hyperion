@@ -31,6 +31,8 @@
 #define GLFW_LINUX_JOYSTICK_STATE         _GLFWjoystickLinux linjs;
 #define GLFW_LINUX_LIBRARY_JOYSTICK_STATE _GLFWlibraryLinux  linjs;
 
+#define GLFW_BUILD_LINUX_MAPPINGS
+
 // Linux-specific joystick data
 //
 typedef struct _GLFWjoystickLinux
@@ -57,7 +59,7 @@ void _glfwDetectJoystickConnectionLinux(void);
 
 GLFWbool _glfwInitJoysticksLinux(void);
 void _glfwTerminateJoysticksLinux(void);
-GLFWbool _glfwPollJoystickLinux(_GLFWjoystick* js, int mode);
+int _glfwPollJoystickLinux(_GLFWjoystick* js, int mode);
 const char* _glfwGetMappingNameLinux(void);
 void _glfwUpdateGamepadGUIDLinux(char* guid);
 

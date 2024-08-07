@@ -330,6 +330,13 @@ typedef VkResult (APIENTRY * PFN_vkEnumerateInstanceExtensionProperties)(const c
 
 #include "platform.h"
 
+// Constructs a version number string from the public header macros
+#define _GLFW_CONCAT_VERSION(m, n, r) #m "." #n "." #r
+#define _GLFW_MAKE_VERSION(m, n, r) _GLFW_CONCAT_VERSION(m, n, r)
+#define _GLFW_VERSION_NUMBER _GLFW_MAKE_VERSION(GLFW_VERSION_MAJOR, \
+                                                GLFW_VERSION_MINOR, \
+                                                GLFW_VERSION_REVISION)
+
 // Checks for whether the library has been initialized
 #define _GLFW_REQUIRE_INIT()                         \
     if (!_glfw.initialized)                          \
@@ -379,9 +386,6 @@ struct _GLFWinitconfig
     struct {
         GLFWbool  xcbVulkanSurface;
     } x11;
-    struct {
-        int       libdecorMode;
-    } wl;
 };
 
 // Window configuration
@@ -392,14 +396,13 @@ struct _GLFWinitconfig
 //
 struct _GLFWwndconfig
 {
-    int           xpos;
-    int           ypos;
     int           width;
     int           height;
     const char*   title;
     GLFWbool      resizable;
     GLFWbool      visible;
     GLFWbool      decorated;
+    GLFWbool      titlebar;
     GLFWbool      focused;
     GLFWbool      autoIconify;
     GLFWbool      floating;
@@ -419,9 +422,6 @@ struct _GLFWwndconfig
     struct {
         GLFWbool  keymenu;
     } win32;
-    struct {
-        char      appId[256];
-    } wl;
 };
 
 // Context configuration
@@ -555,14 +555,15 @@ struct _GLFWwindow
     _GLFWcontext        context;
 
     struct {
-        GLFWwindowposfun          pos;
-        GLFWwindowsizefun         size;
-        GLFWwindowclosefun        close;
-        GLFWwindowrefreshfun      refresh;
-        GLFWwindowfocusfun        focus;
-        GLFWwindowiconifyfun      iconify;
-        GLFWwindowmaximizefun     maximize;
-        GLFWframebuffersizefun    fbsize;
+        GLFWwindowposfun        pos;
+        GLFWtitlebarhittestfun  tbhittest;
+        GLFWwindowsizefun       size;
+        GLFWwindowclosefun      close;
+        GLFWwindowrefreshfun    refresh;
+        GLFWwindowfocusfun      focus;
+        GLFWwindowiconifyfun    iconify;
+        GLFWwindowmaximizefun   maximize;
+        GLFWframebuffersizefun  fbsize;
         GLFWwindowcontentscalefun scale;
         GLFWmousebuttonfun        mouseButton;
         GLFWcursorposfun          cursorPos;
@@ -635,8 +636,7 @@ struct _GLFWmapping
 //
 struct _GLFWjoystick
 {
-    GLFWbool        allocated;
-    GLFWbool        connected;
+    GLFWbool        present;
     float*          axes;
     int             axisCount;
     unsigned char*  buttons;
@@ -682,8 +682,8 @@ struct _GLFWplatform
     void (*setCursorMode)(_GLFWwindow*,int);
     void (*setRawMouseMotion)(_GLFWwindow*,GLFWbool);
     GLFWbool (*rawMouseMotionSupported)(void);
-    GLFWbool (*createCursor)(_GLFWcursor*,const GLFWimage*,int,int);
-    GLFWbool (*createStandardCursor)(_GLFWcursor*,int);
+    int (*createCursor)(_GLFWcursor*,const GLFWimage*,int,int);
+    int (*createStandardCursor)(_GLFWcursor*,int);
     void (*destroyCursor)(_GLFWcursor*);
     void (*setCursor)(_GLFWwindow*,_GLFWcursor*);
     const char* (*getScancodeName)(int);
@@ -692,7 +692,7 @@ struct _GLFWplatform
     const char* (*getClipboardString)(void);
     GLFWbool (*initJoysticks)(void);
     void (*terminateJoysticks)(void);
-    GLFWbool (*pollJoystick)(_GLFWjoystick*,int);
+    int (*pollJoystick)(_GLFWjoystick*,int);
     const char* (*getMappingName)(void);
     void (*updateGamepadGUID)(char*);
     // monitor
@@ -705,7 +705,7 @@ struct _GLFWplatform
     GLFWbool (*getGammaRamp)(_GLFWmonitor*,GLFWgammaramp*);
     void (*setGammaRamp)(_GLFWmonitor*,const GLFWgammaramp*);
     // window
-    GLFWbool (*createWindow)(_GLFWwindow*,const _GLFWwndconfig*,const _GLFWctxconfig*,const _GLFWfbconfig*);
+    int (*createWindow)(_GLFWwindow*,const _GLFWwndconfig*,const _GLFWctxconfig*,const _GLFWfbconfig*);
     void (*destroyWindow)(_GLFWwindow*);
     void (*setWindowTitle)(_GLFWwindow*,const char*);
     void (*setWindowIcon)(_GLFWwindow*,int,const GLFWimage*);
@@ -726,12 +726,12 @@ struct _GLFWplatform
     void (*requestWindowAttention)(_GLFWwindow*);
     void (*focusWindow)(_GLFWwindow*);
     void (*setWindowMonitor)(_GLFWwindow*,_GLFWmonitor*,int,int,int,int,int);
-    GLFWbool (*windowFocused)(_GLFWwindow*);
-    GLFWbool (*windowIconified)(_GLFWwindow*);
-    GLFWbool (*windowVisible)(_GLFWwindow*);
-    GLFWbool (*windowMaximized)(_GLFWwindow*);
-    GLFWbool (*windowHovered)(_GLFWwindow*);
-    GLFWbool (*framebufferTransparent)(_GLFWwindow*);
+    int (*windowFocused)(_GLFWwindow*);
+    int (*windowIconified)(_GLFWwindow*);
+    int (*windowVisible)(_GLFWwindow*);
+    int (*windowMaximized)(_GLFWwindow*);
+    int (*windowHovered)(_GLFWwindow*);
+    int (*framebufferTransparent)(_GLFWwindow*);
     float (*getWindowOpacity)(_GLFWwindow*);
     void (*setWindowResizable)(_GLFWwindow*,GLFWbool);
     void (*setWindowDecorated)(_GLFWwindow*,GLFWbool);
@@ -742,13 +742,17 @@ struct _GLFWplatform
     void (*waitEvents)(void);
     void (*waitEventsTimeout)(double);
     void (*postEmptyEvent)(void);
+
+    // Hazel
+    void (*setWindowTitleBar)(_GLFWwindow*,GLFWbool);
+
     // EGL
     EGLenum (*getEGLPlatform)(EGLint**);
     EGLNativeDisplayType (*getEGLNativeDisplay)(void);
     EGLNativeWindowType (*getEGLNativeWindow)(_GLFWwindow*);
     // vulkan
     void (*getRequiredInstanceExtensions)(char**);
-    GLFWbool (*getPhysicalDevicePresentationSupport)(VkInstance,VkPhysicalDevice,uint32_t);
+    int (*getPhysicalDevicePresentationSupport)(VkInstance,VkPhysicalDevice,uint32_t);
     VkResult (*createWindowSurface)(VkInstance,_GLFWwindow*,const VkAllocationCallbacks*,VkSurfaceKHR*);
 };
 
@@ -887,6 +891,65 @@ void _glfwPlatformInitTimer(void);
 uint64_t _glfwPlatformGetTimerValue(void);
 uint64_t _glfwPlatformGetTimerFrequency(void);
 
+int _glfwPlatformCreateWindow(_GLFWwindow* window,
+                              const _GLFWwndconfig* wndconfig,
+                              const _GLFWctxconfig* ctxconfig,
+                              const _GLFWfbconfig* fbconfig);
+void _glfwPlatformDestroyWindow(_GLFWwindow* window);
+void _glfwPlatformSetWindowTitle(_GLFWwindow* window, const char* title);
+void _glfwPlatformSetWindowIcon(_GLFWwindow* window,
+                                int count, const GLFWimage* images);
+void _glfwPlatformGetWindowPos(_GLFWwindow* window, int* xpos, int* ypos);
+void _glfwPlatformSetWindowPos(_GLFWwindow* window, int xpos, int ypos);
+void _glfwPlatformGetWindowSize(_GLFWwindow* window, int* width, int* height);
+void _glfwPlatformSetWindowSize(_GLFWwindow* window, int width, int height);
+void _glfwPlatformSetWindowSizeLimits(_GLFWwindow* window,
+                                      int minwidth, int minheight,
+                                      int maxwidth, int maxheight);
+void _glfwPlatformSetWindowAspectRatio(_GLFWwindow* window, int numer, int denom);
+void _glfwPlatformGetFramebufferSize(_GLFWwindow* window, int* width, int* height);
+void _glfwPlatformGetWindowFrameSize(_GLFWwindow* window,
+                                     int* left, int* top,
+                                     int* right, int* bottom);
+void _glfwPlatformGetWindowContentScale(_GLFWwindow* window,
+                                        float* xscale, float* yscale);
+void _glfwPlatformIconifyWindow(_GLFWwindow* window);
+void _glfwPlatformRestoreWindow(_GLFWwindow* window);
+void _glfwPlatformMaximizeWindow(_GLFWwindow* window);
+void _glfwPlatformShowWindow(_GLFWwindow* window);
+void _glfwPlatformHideWindow(_GLFWwindow* window);
+void _glfwPlatformRequestWindowAttention(_GLFWwindow* window);
+void _glfwPlatformFocusWindow(_GLFWwindow* window);
+void _glfwPlatformSetWindowMonitor(_GLFWwindow* window, _GLFWmonitor* monitor,
+                                   int xpos, int ypos, int width, int height,
+                                   int refreshRate);
+int _glfwPlatformWindowFocused(_GLFWwindow* window);
+int _glfwPlatformWindowIconified(_GLFWwindow* window);
+int _glfwPlatformWindowVisible(_GLFWwindow* window);
+int _glfwPlatformWindowMaximized(_GLFWwindow* window);
+int _glfwPlatformWindowHovered(_GLFWwindow* window);
+int _glfwPlatformFramebufferTransparent(_GLFWwindow* window);
+float _glfwPlatformGetWindowOpacity(_GLFWwindow* window);
+void _glfwPlatformSetWindowResizable(_GLFWwindow* window, GLFWbool enabled);
+void _glfwPlatformSetWindowDecorated(_GLFWwindow* window, GLFWbool enabled);
+void _glfwPlatformSetWindowTitlebar(_GLFWwindow* window, GLFWbool enabled);
+void _glfwPlatformSetWindowFloating(_GLFWwindow* window, GLFWbool enabled);
+void _glfwPlatformSetWindowOpacity(_GLFWwindow* window, float opacity);
+
+void _glfwPlatformPollEvents(void);
+void _glfwPlatformWaitEvents(void);
+void _glfwPlatformWaitEventsTimeout(double timeout);
+void _glfwPlatformPostEmptyEvent(void);
+
+void _glfwPlatformGetRequiredInstanceExtensions(char** extensions);
+int _glfwPlatformGetPhysicalDevicePresentationSupport(VkInstance instance,
+                                                      VkPhysicalDevice device,
+                                                      uint32_t queuefamily);
+VkResult _glfwPlatformCreateWindowSurface(VkInstance instance,
+                                          _GLFWwindow* window,
+                                          const VkAllocationCallbacks* allocator,
+                                          VkSurfaceKHR* surface);
+
 GLFWbool _glfwPlatformCreateTls(_GLFWtls* tls);
 void _glfwPlatformDestroyTls(_GLFWtls* tls);
 void* _glfwPlatformGetTls(_GLFWtls* tls);
@@ -909,6 +972,7 @@ GLFWproc _glfwPlatformGetModuleSymbol(void* module, const char* name);
 void _glfwInputWindowFocus(_GLFWwindow* window, GLFWbool focused);
 void _glfwInputWindowPos(_GLFWwindow* window, int xpos, int ypos);
 void _glfwInputWindowSize(_GLFWwindow* window, int width, int height);
+void _glfwInputTitleBarHitTest(_GLFWwindow* window, int posX, int posY, int* hit);
 void _glfwInputFramebufferSize(_GLFWwindow* window, int width, int height);
 void _glfwInputWindowContentScale(_GLFWwindow* window,
                                   float xscale, float yscale);
@@ -998,11 +1062,8 @@ void _glfwTerminateVulkan(void);
 const char* _glfwGetVulkanResultString(VkResult result);
 
 size_t _glfwEncodeUTF8(char* s, uint32_t codepoint);
-char** _glfwParseUriList(char* text, int* count);
 
 char* _glfw_strdup(const char* source);
-int _glfw_min(int a, int b);
-int _glfw_max(int a, int b);
 float _glfw_fminf(float a, float b);
 float _glfw_fmaxf(float a, float b);
 

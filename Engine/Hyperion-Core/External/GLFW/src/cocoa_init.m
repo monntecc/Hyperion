@@ -27,9 +27,6 @@
 //========================================================================
 
 #include "internal.h"
-
-#if defined(_GLFW_COCOA)
-
 #include <sys/param.h> // For MAXPATHLEN
 
 // Needed for _NSGetProgname
@@ -463,26 +460,18 @@ void* _glfwLoadLocalVulkanLoaderCocoa(void)
     if (!bundle)
         return NULL;
 
-    CFURLRef frameworksUrl = CFBundleCopyPrivateFrameworksURL(bundle);
-    if (!frameworksUrl)
+    CFURLRef url =
+        CFBundleCopyAuxiliaryExecutableURL(bundle, CFSTR("libvulkan.1.dylib"));
+    if (!url)
         return NULL;
-
-    CFURLRef loaderUrl = CFURLCreateCopyAppendingPathComponent(
-        kCFAllocatorDefault, frameworksUrl, CFSTR("libvulkan.1.dylib"), false);
-    if (!loaderUrl)
-    {
-        CFRelease(frameworksUrl);
-        return NULL;
-    }
 
     char path[PATH_MAX];
     void* handle = NULL;
 
-    if (CFURLGetFileSystemRepresentation(loaderUrl, true, (UInt8*) path, sizeof(path) - 1))
+    if (CFURLGetFileSystemRepresentation(url, true, (UInt8*) path, sizeof(path) - 1))
         handle = _glfwPlatformLoadModule(path);
 
-    CFRelease(loaderUrl);
-    CFRelease(frameworksUrl);
+    CFRelease(url);
     return handle;
 }
 
@@ -554,13 +543,17 @@ GLFWbool _glfwConnectCocoa(int platformID, _GLFWplatform* platform)
         _glfwGetWindowOpacityCocoa,
         _glfwSetWindowResizableCocoa,
         _glfwSetWindowDecoratedCocoa,
-        _glfwSetWindowFloatingCocoa,
+        _glfwSetWindowFloatingNull,
         _glfwSetWindowOpacityCocoa,
         _glfwSetWindowMousePassthroughCocoa,
         _glfwPollEventsCocoa,
         _glfwWaitEventsCocoa,
         _glfwWaitEventsTimeoutCocoa,
         _glfwPostEmptyEventCocoa,
+
+        // Hazel
+        _glfwSetWindowTitlebarNull,
+
         _glfwGetEGLPlatformCocoa,
         _glfwGetEGLNativeDisplayCocoa,
         _glfwGetEGLNativeWindowCocoa,
@@ -687,11 +680,7 @@ void _glfwTerminateCocoa(void)
     _glfw_free(_glfw.ns.clipboardString);
 
     _glfwTerminateNSGL();
-    _glfwTerminateEGL();
-    _glfwTerminateOSMesa();
 
     } // autoreleasepool
 }
-
-#endif // _GLFW_COCOA
 

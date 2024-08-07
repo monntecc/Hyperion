@@ -4,7 +4,7 @@ project "Hyperion-Sandbox"
 	cppdialect "C++20"
 	staticruntime "off"
 
-	files { "Source/HyperionSandbox.cpp", "Source/Private/**.cpp", "Source/Public/**.hpp" }
+	files { "Source/HyperionSandbox.cpp", "Source/Private/**.cpp", "Source/Public/**.hpp", "../Hyperion-Editor/Source/Private/**.cpp", "../Hyperion-Editor/Source/Public/**.hpp" }
 
 	includedirs
 	{
@@ -15,6 +15,8 @@ project "Hyperion-Sandbox"
 		"%{wks.location}/Engine/Hyperion-Core/Source",
 		"%{wks.location}/Engine/Hyperion-Core/Source/Public",
 		"%{wks.location}/Engine/Hyperion-Core/External",
+		"%{wks.location}/Engine/Hyperion-Editor/Source",
+		"%{wks.location}/Engine/Hyperion-Editor/Source/Public",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Tracy}",
@@ -24,7 +26,7 @@ project "Hyperion-Sandbox"
 
 	defines { "HR_DYNAMIC_LINK", "IMGUI_DEFINE_MATH_OPERATORS" }
 
-	links { "Hyperion-Core" }
+	links { "Hyperion-Core", "Hyperion-Editor" }
 
 	targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")

@@ -9,6 +9,7 @@
 #include "Engine/RHI/Linux/LinuxWindow.hpp"
 
 #include "Engine/Renderer/Renderer.hpp"
+#include "Editor/Widgets/TitlebarWidget.hpp"
 
 #include <Tracy.hpp>
 #include <imgui.h>
@@ -71,13 +72,42 @@ namespace Hyperion {
         m_Context = GraphicsContext::Create(m_Window);
         m_Context->Init();
 
+        GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* videoMode = glfwGetVideoMode(primaryMonitor);
+
+        int monitorX, monitorY;
+        glfwGetMonitorPos(primaryMonitor, &monitorX, &monitorY);
+
         // Hide system titlebar
         glfwSetWindowAttrib(m_Window, GLFW_DECORATED, GLFW_FALSE);
+
+        // Center window
+        glfwSetWindowPos(m_Window,
+                         monitorX + (videoMode->width - m_Data.Width) / 2,
+                         monitorY + (videoMode->height - m_Data.Height) / 2);
 
         glfwSetWindowUserPointer(m_Window, this);
         SetVSync(true);
 
+        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods){
+            if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+                double xpos, ypos;
+                glfwGetCursorPos(window, &xpos, &ypos);
+                glfwSetWindowUserPointer(window, new double[2]{ xpos, ypos });
+            } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+                double* pos = static_cast<double*>(glfwGetWindowUserPointer(window));
+                delete[] pos;
+            }
+        });
+        glfwSetWindowPosCallback(m_Window, [](GLFWwindow* window, int xpos, int ypos){
+            double* pos = static_cast<double*>(glfwGetWindowUserPointer(window));
+            if (pos != nullptr) {
+                glfwSetWindowPos(window, xpos - pos[0], ypos - pos[1]);
+            }
+        });
+
         // Set GLFW callbacks
+        glfwSetWindowUserPointer(m_Window, this);
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
         {
             WindowData& data = static_cast<LinuxWindow*>(glfwGetWindowUserPointer(window))->m_Data;

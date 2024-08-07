@@ -29,8 +29,6 @@
 
 #include "internal.h"
 
-#if defined(_GLFW_COCOA)
-
 #include <unistd.h>
 #include <ctype.h>
 #include <string.h>
@@ -98,7 +96,8 @@ static CFComparisonResult compareElements(const void* fp,
 //
 static void closeJoystick(_GLFWjoystick* js)
 {
-    _glfwInputJoystick(js, GLFW_DISCONNECTED);
+    if (!js->present)
+        return;
 
     for (int i = 0;  i < CFArrayGetCount(js->ns.axes);  i++)
         _glfw_free((void*) CFArrayGetValueAtIndex(js->ns.axes, i));
@@ -113,6 +112,7 @@ static void closeJoystick(_GLFWjoystick* js)
     CFRelease(js->ns.hats);
 
     _glfwFreeJoystick(js);
+    _glfwInputJoystick(js, GLFW_DISCONNECTED);
 }
 
 // Callback for user-initiated joystick addition
@@ -289,9 +289,9 @@ static void removeCallback(void* context,
 {
     for (int jid = 0;  jid <= GLFW_JOYSTICK_LAST;  jid++)
     {
-        if (_glfw.joysticks[jid].connected && _glfw.joysticks[jid].ns.device == device)
+        if (_glfw.joysticks[jid].ns.device == device)
         {
-            closeJoystick(&_glfw.joysticks[jid]);
+            closeJoystick(_glfw.joysticks + jid);
             break;
         }
     }
@@ -382,10 +382,7 @@ GLFWbool _glfwInitJoysticksCocoa(void)
 void _glfwTerminateJoysticksCocoa(void)
 {
     for (int jid = 0;  jid <= GLFW_JOYSTICK_LAST;  jid++)
-    {
-        if (_glfw.joysticks[jid].connected)
-            closeJoystick(&_glfw.joysticks[jid]);
-    }
+        closeJoystick(_glfw.joysticks + jid);
 
     if (_glfw.ns.hidManager)
     {
@@ -395,7 +392,7 @@ void _glfwTerminateJoysticksCocoa(void)
 }
 
 
-GLFWbool _glfwPollJoystickCocoa(_GLFWjoystick* js, int mode)
+int _glfwPollJoystickCocoa(_GLFWjoystick* js, int mode)
 {
     if (mode & _GLFW_POLL_AXES)
     {
@@ -458,7 +455,7 @@ GLFWbool _glfwPollJoystickCocoa(_GLFWjoystick* js, int mode)
         }
     }
 
-    return js->connected;
+    return js->present;
 }
 
 const char* _glfwGetMappingNameCocoa(void)
@@ -477,6 +474,4 @@ void _glfwUpdateGamepadGUIDCocoa(char* guid)
                 original, original + 16);
     }
 }
-
-#endif // _GLFW_COCOA
 

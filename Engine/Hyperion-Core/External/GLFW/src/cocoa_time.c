@@ -28,8 +28,6 @@
 
 #include "internal.h"
 
-#if defined(GLFW_BUILD_COCOA_TIMER)
-
 #include <mach/mach_time.h>
 
 
@@ -54,6 +52,4 @@ uint64_t _glfwPlatformGetTimerFrequency(void)
 {
     return _glfw.timer.ns.frequency;
 }
-
-#endif // GLFW_BUILD_COCOA_TIMER
 

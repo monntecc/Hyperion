@@ -42,7 +42,7 @@ void _glfwTerminateJoysticksNull(void)
 {
 }
 
-GLFWbool _glfwPollJoystickNull(_GLFWjoystick* js, int mode)
+int _glfwPollJoystickNull(_GLFWjoystick* js, int mode)
 {
     return GLFW_FALSE;
 }

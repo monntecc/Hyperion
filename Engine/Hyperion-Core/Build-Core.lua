@@ -14,6 +14,9 @@ project "Hyperion-Core"
         "Source/hrpch.hpp",
         "Source/hrpch.cpp",
 
+        "../Hyperion-Editor/Source/Private/Widgets/TitlebarWidget.cpp",
+        "../Hyperion-Editor/Source/Public/Editor/Widgets/TitlebarWidget.hpp",
+
 		"Source/Public/**.hpp",
 		"Source/Private/**.cpp",
 
@@ -37,6 +40,8 @@ project "Hyperion-Core"
 	{
         "Source",
 		"Source/Public",
+
+		"../Hyperion-Editor/Source/Public",
 
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.GLFW}",

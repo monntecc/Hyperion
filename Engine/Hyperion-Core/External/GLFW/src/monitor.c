@@ -96,10 +96,6 @@ static GLFWbool refreshVideoModes(_GLFWmonitor* monitor)
 //
 void _glfwInputMonitor(_GLFWmonitor* monitor, int action, int placement)
 {
-    assert(monitor != NULL);
-    assert(action == GLFW_CONNECTED || action == GLFW_DISCONNECTED);
-    assert(placement == _GLFW_INSERT_FIRST || placement == _GLFW_INSERT_LAST);
-
     if (action == GLFW_CONNECTED)
     {
         _glfw.monitorCount++;
@@ -159,7 +155,6 @@ void _glfwInputMonitor(_GLFWmonitor* monitor, int action, int placement)
 //
 void _glfwInputMonitorWindow(_GLFWmonitor* monitor, _GLFWwindow* window)
 {
-    assert(monitor != NULL);
     monitor->window = window;
 }
 
@@ -527,8 +522,6 @@ GLFWAPI void glfwSetGammaRamp(GLFWmonitor* handle, const GLFWgammaramp* ramp)
     assert(ramp->green != NULL);
     assert(ramp->blue != NULL);
 
-    _GLFW_REQUIRE_INIT();
-
     if (ramp->size <= 0)
     {
         _glfwInputError(GLFW_INVALID_VALUE,
@@ -536,6 +529,8 @@ GLFWAPI void glfwSetGammaRamp(GLFWmonitor* handle, const GLFWgammaramp* ramp)
                         ramp->size);
         return;
     }
+
+    _GLFW_REQUIRE_INIT();
 
     if (!monitor->originalRamp.size)
     {

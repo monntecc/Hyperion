@@ -12,6 +12,8 @@ namespace Hyperion {
 
 		// Window custom theme
 		void DrawUITitlebar();
+
+        bool IsTitlebarHovered() { return m_TitleBarHovered; }
 	private:
 		bool m_TitleBarHovered = false;
 
