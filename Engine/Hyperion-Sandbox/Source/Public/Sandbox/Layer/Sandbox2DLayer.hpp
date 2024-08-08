@@ -2,6 +2,8 @@
 
 #include "Hyperion.hpp"
 
+#include "Sandbox/Widgets/TitlebarWidget.hpp"
+
 class Sandbox2DLayer : public Hyperion::Layer
 {
 public:
@@ -21,4 +23,7 @@ private:
     glm::vec4 m_SquareColor = { 0.8f, 0.2f, 0.3f, 1.0f };
     glm::vec4 m_CheckerboardColor = glm::vec4(1.0f);
     glm::vec4 m_RotatedCheckerboardColor = glm::vec4(1.0f);
+
+    // Widgets
+    TitlebarWidget m_TitlebarWidget;
 };

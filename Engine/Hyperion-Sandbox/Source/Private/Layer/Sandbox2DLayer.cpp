@@ -89,4 +89,15 @@ void Sandbox2DLayer::OnImGuiRender()
     ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
     ImGui::End();
+
+    // Render titlebar
+    ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
+    ImGui::SetNextWindowSize(ImVec2(ImGui::GetMainViewport()->Size.x, 50.0f));
+    ImGui::Begin("Titlebar", nullptr, ImGuiWindowFlags_NoDecoration |
+          ImGuiWindowFlags_NoSavedSettings |
+          ImGuiWindowFlags_NoFocusOnAppearing |
+          ImGuiWindowFlags_NoNav |
+          ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking);
+    m_TitlebarWidget.DrawUITitlebar();
+    ImGui::End();
 }

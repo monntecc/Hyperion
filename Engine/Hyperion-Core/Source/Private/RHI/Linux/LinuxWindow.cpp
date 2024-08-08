@@ -271,73 +271,15 @@ namespace Hyperion {
         if (!m_Window)
             return;
 
-        Display* x11Display = glfwGetX11Display();
-        if (!x11Display)
-            return;
-
-        XID x11Window = glfwGetX11Window(m_Window);
-        if (x11Window == None)
-            return;
-
-        XEvent event;
-        memset(&event, 0, sizeof(event));
-        event.type = ButtonPress;
-        event.xbutton.button = Button1; // Left mouse button
-        event.xbutton.same_screen = True;
-        event.xbutton.window = x11Window;
-        event.xbutton.root = RootWindow(x11Display, DefaultScreen(x11Display));
-        event.xbutton.subwindow = None;
-        event.xbutton.x_root = 0;
-        event.xbutton.y_root = 0;
-        event.xbutton.x = 0;
-        event.xbutton.y = 0;
-
-        XSendEvent(x11Display, x11Window, False, PointerMotionMask | ButtonPressMask, &event);
-        XFlush(x11Display);
+        // TODO: Add window dragging to X11
     }
 
     void LinuxWindow::StartResize(WindowBorder border) const
     {
-//        if (!m_Window)
-//            return;
-//
-//        Display* display = glfwGetX11Display();
-//        XID window = glfwGetX11Window(m_Window);
-//
-//        Cursor cursor;
-//        switch (border) {
-//            case WindowBorder::Left:
-//                cursor = XCreateFontCursor(display, 1);
-//                break;
-//            case WindowBorder::Top:
-//                cursor = XCreateFontCursor(display, 2);
-//                break;
-//            case WindowBorder::Right:
-//                cursor = XCreateFontCursor(display, 3);
-//                break;
-//            case WindowBorder::Bottom:
-//                cursor = XCreateFontCursor(display, 4);
-//                break;
-//            case WindowBorder::TopLeft:
-//                cursor = XCreateFontCursor(display, 5);
-//                break;
-//            case WindowBorder::TopRight:
-//                cursor = XCreateFontCursor(display, 6);
-//                break;
-//            case WindowBorder::BottomLeft:
-//                cursor = XCreateFontCursor(display, 7);
-//                break;
-//            case WindowBorder::BottomRight:
-//                cursor = XCreateFontCursor(display, 8);
-//                break;
-//        }
-//
-//        // Set cursor shape
-//        XDefineCursor(display, window, cursor);
-//
-//        // Set cursor grab
-//        XGrabPointer(display, window, True, ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
-//                     GrabModeAsync, GrabModeAsync, None, cursor, CurrentTime);
+        if (!m_Window)
+            return;
+
+        // TODO: Add resize to X11
     }
 
     bool LinuxWindow::IsMaximized() const
