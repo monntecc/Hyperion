@@ -58,4 +58,4 @@ If you are interested in contributing to Hyperion, please see the contribution g
 
 **License**
 
-Hyperion is licensed under the Apache 2.0 License: [https://github.com/nylestroke/Hyperion/blob/master/LICENSE].
+Hyperion is licensed under the Apache 2.0 License: [here](https://github.com/nylestroke/Hyperion/blob/master/LICENSE).
