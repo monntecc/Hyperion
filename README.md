@@ -27,27 +27,6 @@ Open solution in Visual Studio 2022 or higher, build, and open start project 'Sa
 
 This will generate a binary file called `Hyperion` in the `build` directory. You can then run the engine by executing the binary file.
 
-**Usage**
-
-To create a new game with Hyperion, you can use the following command: (Planning)
-
-```
-Hyperion new_project <project_name>
-```
-
-This will create a new directory for your project and generate a basic project template.
-
-Once you have created a new project, you can start developing your game by adding code to the `src` directory. The `src` directory contains the source code for all of the engine's features.
-
-To run your game, you can use the following command:
-
-```
-cd <project_name>
-./Hyperion
-```
-
-This will start the engine and load your game project.
-
 **Documentation**
 
 The Hyperion documentation is available at [insert documentation link here]. (Planning)
